@@ -31,14 +31,16 @@
 <div><span class="eyebrow dark">Free Quote Request</span><h1>Tell us about the property.</h1><p>Choose a one-time service or tell us you are interested in a recurring exterior-maintenance plan. Call, email, or send a quote request and we’ll follow up.</p>
 <div class="contact-info"><div class="info-row"><small>Phone</small><strong><a href="tel:+19545885359">954-588-5359</a></strong></div><div class="info-row"><small>Email</small><strong><a href="mailto:info@ppwexteriorservices.com">info@ppwexteriorservices.com</a></strong></div><div class="info-row"><small>Service Areas</small><strong>Broward, Miami-Dade &amp; Palm Beach Counties</strong></div></div></div>
 <div class="quote-form"><span class="eyebrow green">Get Pricing</span><h2>Request a quote</h2><p>Give us enough detail to understand the property and services you're considering.</p>
-<form data-demo>
-<div class="field"><label>Name</label><input required placeholder="Your name"></div>
-<div class="field"><label>Phone</label><input required placeholder="Best number to reach you"></div>
-<div class="field"><label>Email</label><input type="email" placeholder="Email address"></div>
-<div class="field"><label>Property Type</label><select><option>Residential</option><option>Restaurant / Retail</option><option>Office / Commercial</option><option>HOA / Condominium</option><option>Property Management</option><option>Other</option></select></div>
-<div class="field"><label>Primary Service</label><select><option>Pressure Washing</option><option>Window Cleaning</option><option>Landscaping</option><option>Multiple Services</option><option>Recurring Care Plan</option></select></div>
-<div class="field"><label>Frequency</label><select><option>One-Time</option><option>Weekly</option><option>Biweekly</option><option>Monthly</option><option>Quarterly</option><option>Not Sure</option></select></div>
-<div class="field full"><label>Property / Project Details</label><textarea placeholder="Describe the areas you need cleaned or maintained, approximate property size, desired frequency, and anything else we should know."></textarea></div>
+<form action="https://formcarry.com/s/X7_7zVFhFwl" method="POST" accept-charset="UTF-8">
+<input type="hidden" name="_next" value="https://ppwexteriorservices.com/thank-you.html">
+<div class="hp" aria-hidden="true"><label>Company website</label><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></div>
+<div class="field"><label for="name">Name</label><input id="name" name="name" required placeholder="Your name" autocomplete="name"></div>
+<div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" required placeholder="Best number to reach you" autocomplete="tel"></div>
+<div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required placeholder="Email address" autocomplete="email"></div>
+<div class="field"><label for="property_type">Property Type</label><select id="property_type" name="property_type"><option>Residential</option><option>Restaurant / Retail</option><option>Office / Commercial</option><option>HOA / Condominium</option><option>Property Management</option><option>Other</option></select></div>
+<div class="field"><label for="primary_service">Primary Service</label><select id="primary_service" name="primary_service"><option>Pressure Washing</option><option>Window Cleaning</option><option>Landscaping</option><option>Multiple Services</option><option>Recurring Care Plan</option></select></div>
+<div class="field"><label for="frequency">Frequency</label><select id="frequency" name="frequency"><option>One-Time</option><option>Weekly</option><option>Biweekly</option><option>Monthly</option><option>Quarterly</option><option>Not Sure</option></select></div>
+<div class="field full"><label for="message">Property / Project Details</label><textarea id="message" name="message" placeholder="Describe the areas you need cleaned or maintained, approximate property size, desired frequency, and anything else we should know."></textarea></div>
 <div class="field full"><button class="btn btn-dark" type="submit">Submit Quote Request →</button></div>
 </form></div>
 </div></section>
