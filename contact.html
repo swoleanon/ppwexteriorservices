@@ -31,15 +31,33 @@
 <div><span class="eyebrow dark">Free Quote Request</span><h1>Tell us about the property.</h1><p>Choose a one-time service or tell us you are interested in a recurring exterior-maintenance plan. Call, email, or send a quote request and we’ll follow up.</p>
 <div class="contact-info"><div class="info-row"><small>Phone</small><strong><a href="tel:+19545885359">954-588-5359</a></strong></div><div class="info-row"><small>Email</small><strong><a href="mailto:info@ppwexteriorservices.com">info@ppwexteriorservices.com</a></strong></div><div class="info-row"><small>Service Areas</small><strong>Broward, Miami-Dade &amp; Palm Beach Counties</strong></div></div></div>
 <div class="quote-form"><span class="eyebrow green">Get Pricing</span><h2>Request a quote</h2><p>Give us enough detail to understand the property and services you're considering.</p>
-<form id="quote-form" action="https://formcarry.com/s/X7_7zVFhFwl" method="POST" accept-charset="UTF-8">
+<form id="quote-form" action="https://formcarry.com/s/X7_7zVFhFwl" method="POST" accept-charset="UTF-8" enctype="multipart/form-data">
 <input type="hidden" name="_gotcha" value="" autocomplete="off" tabindex="-1">
 <div class="field"><label for="name">Name</label><input id="name" name="name" required placeholder="Your name" autocomplete="name"></div>
 <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" required placeholder="Best number to reach you" autocomplete="tel"></div>
 <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required placeholder="Email address" autocomplete="email"></div>
+<div class="field full address-field">
+  <label for="address">Property Address</label>
+  <div class="address-combo">
+    <input id="address" name="address" required placeholder="Start typing the street address" autocomplete="off" aria-autocomplete="list" aria-expanded="false" aria-controls="address-results">
+    <ul id="address-results" class="address-results" hidden role="listbox"></ul>
+  </div>
+  <small id="address-hint" class="field-hint">Keep typing, then choose the matching address so we can confirm the location.</small>
+  <input type="hidden" name="address_verified" id="address_verified" value="no">
+</div>
 <div class="field"><label for="property_type">Property Type</label><select id="property_type" name="property_type"><option>Residential</option><option>Restaurant / Retail</option><option>Office / Commercial</option><option>HOA / Condominium</option><option>Property Management</option><option>Other</option></select></div>
 <div class="field"><label for="primary_service">Primary Service</label><select id="primary_service" name="primary_service"><option>Pressure Washing</option><option>Window Cleaning</option><option>Landscaping</option><option>Multiple Services</option><option>Recurring Care Plan</option></select></div>
 <div class="field"><label for="frequency">Frequency</label><select id="frequency" name="frequency"><option>One-Time</option><option>Weekly</option><option>Biweekly</option><option>Monthly</option><option>Quarterly</option><option>Not Sure</option></select></div>
 <div class="field full"><label for="message">Property / Project Details</label><textarea id="message" name="message" placeholder="Describe the areas you need cleaned or maintained, approximate property size, desired frequency, and anything else we should know."></textarea></div>
+<div class="field full">
+  <label for="photos">Photos <span class="optional">(optional)</span></label>
+  <label class="file-drop">
+    <input id="photos" name="picture" type="file" accept="image/*" multiple>
+    <span>Add photos of the property or the areas you want serviced</span>
+    <small>Up to 5 images, 10MB each</small>
+  </label>
+  <div id="photo-previews" class="photo-previews"></div>
+</div>
 <div class="field full"><button class="btn btn-dark" type="submit">Submit Quote Request →</button></div>
 <p id="form-status" class="form-status" role="status"></p>
 </form></div>
