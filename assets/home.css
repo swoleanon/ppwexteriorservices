@@ -86,6 +86,8 @@ button {
 .utility-right {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 20px;
 }
 
@@ -148,6 +150,14 @@ button {
   height: 2px;
   background: var(--lime-deep);
   transition: right 0.25s ease;
+}
+
+.nav-contact {
+  display: none;
+}
+
+.nav-contact::after {
+  content: none !important;
 }
 
 .nav-links a:hover::after,
@@ -431,6 +441,23 @@ h3 {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 32px;
+}
+
+.cta-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 16px 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.cta-contact a {
+  color: var(--lime);
+}
+
+.cta-contact a:hover {
+  opacity: 0.85;
 }
 
 /* ——— Capability strip ——— */
@@ -868,6 +895,10 @@ h3 {
   color: var(--muted-on-dark);
 }
 
+.closing .cta-contact a {
+  color: var(--lime);
+}
+
 /* ——— Footer ——— */
 footer {
   background: #050b07;
@@ -970,6 +1001,12 @@ footer {
 
   .nav-links.open a::after {
     display: none;
+  }
+
+  .nav-links.open .nav-contact {
+    display: block;
+    color: var(--lime-deep);
+    font-weight: 700;
   }
 
   .capability-row {
