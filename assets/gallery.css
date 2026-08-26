@@ -67,11 +67,12 @@
   z-index: 4;
   pointer-events: none;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: rgba(7, 16, 10, 0.72);
   color: #fff;
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -105,18 +106,20 @@
   border: 1px solid var(--line, rgba(7, 16, 10, 0.12));
   background: #fff;
   color: inherit;
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 9px 14px;
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .portfolio-filters button:hover,
 .portfolio-filters button.is-active {
-  background: var(--ink, #07100a);
-  color: #fff;
-  border-color: var(--ink, #07100a);
+  background: var(--lime, #8cff00);
+  color: #07100a;
+  border-color: var(--lime, #8cff00);
 }
 
 .portfolio-grid {
