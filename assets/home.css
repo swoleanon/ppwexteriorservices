@@ -115,7 +115,11 @@ button {
   border-bottom: 0;
 }
 
-.site-nav.is-scrolled,
+.site-nav.is-scrolled {
+  background: transparent;
+  border-bottom: 0;
+}
+
 .site-nav:has(.nav-links.open) {
   background: #050b07;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -149,17 +153,17 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4px 28px;
+  gap: 6px 32px;
   flex-wrap: wrap;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #e8eee9;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.65);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 2px 14px rgba(0, 0, 0, 0.65);
 }
 
 .nav-links > a,
 .nav-parent {
-  padding: 8px 0;
+  padding: 10px 0;
   position: relative;
 }
 
@@ -210,10 +214,10 @@ button {
   color: inherit;
   cursor: pointer;
   font: inherit;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   height: 100%;
 }
 
@@ -252,8 +256,10 @@ button {
 
 .nav-sub a {
   display: block;
-  padding: 10px 16px;
+  padding: 12px 18px;
   white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .nav-sub a:hover,
@@ -285,13 +291,13 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 42px;
-  padding: 0 16px;
+  height: 46px;
+  padding: 0 18px;
   border: 1px solid var(--lime);
   color: var(--lime);
   background: rgba(7, 16, 10, 0.78);
   font-family: var(--font-display);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   border-radius: 8px;
   white-space: nowrap;
@@ -307,12 +313,12 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 42px;
-  padding: 0 16px;
+  height: 46px;
+  padding: 0 18px;
   background: var(--lime);
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   border-radius: 8px;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
@@ -330,10 +336,10 @@ button {
   background: rgba(7, 16, 10, 0.78);
   color: #fff;
   border-radius: 8px;
-  padding: 9px 12px;
+  padding: 10px 14px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
