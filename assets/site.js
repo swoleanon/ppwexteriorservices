@@ -45,6 +45,61 @@ document.addEventListener('click', (event) => {
 
 const year=document.getElementById('year'); if(year) year.textContent=new Date().getFullYear();
 
+function initBeforeAfter(){
+  document.querySelectorAll('.ba-slider').forEach((slider) => {
+    const range = slider.querySelector('.ba-range');
+    const setPos = (pct) => {
+      const p = Math.max(0, Math.min(100, Number(pct)));
+      slider.style.setProperty('--pos', p + '%');
+      if (range && Number(range.value) !== Math.round(p)) range.value = String(Math.round(p));
+    };
+    const fromEvent = (event) => {
+      const rect = slider.getBoundingClientRect();
+      const x = event.clientX ?? event.touches?.[0]?.clientX ?? 0;
+      return ((x - rect.left) / rect.width) * 100;
+    };
+
+    setPos(slider.dataset.start || range?.value || 50);
+
+    slider.addEventListener('pointerdown', (event) => {
+      if (event.target === range) return;
+      slider.setPointerCapture(event.pointerId);
+      slider.classList.add('is-dragging');
+      event.preventDefault();
+      setPos(fromEvent(event));
+    });
+    slider.addEventListener('pointermove', (event) => {
+      if (!slider.hasPointerCapture(event.pointerId)) return;
+      event.preventDefault();
+      setPos(fromEvent(event));
+    });
+    const stopDrag = (event) => {
+      if (slider.hasPointerCapture(event.pointerId)) slider.releasePointerCapture(event.pointerId);
+      slider.classList.remove('is-dragging');
+    };
+    slider.addEventListener('pointerup', stopDrag);
+    slider.addEventListener('pointercancel', stopDrag);
+    range?.addEventListener('input', () => setPos(range.value));
+  });
+}
+
+function initPortfolioFilters(){
+  const filters = document.querySelector('.portfolio-filters');
+  if (!filters) return;
+  filters.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-filter]');
+    if (!button) return;
+    filters.querySelectorAll('button').forEach((item) => item.classList.toggle('is-active', item === button));
+    const key = button.dataset.filter;
+    document.querySelectorAll('.portfolio-item').forEach((item) => {
+      item.hidden = key !== 'all' && item.dataset.cat !== key;
+    });
+  });
+}
+
+initBeforeAfter();
+initPortfolioFilters();
+
 function initPhotoPreview(){
   const input = document.getElementById('photos');
   const previews = document.getElementById('photo-previews');

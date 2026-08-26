@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/home.css">
+<link rel="stylesheet" href="assets/gallery.css">
 </head>
 <body>
 
@@ -22,7 +23,7 @@
         <button class="nav-parent" type="button" aria-expanded="false" aria-haspopup="true">Services <span class="caret" aria-hidden="true"></span></button>
         <div class="nav-sub">
           <a href="pressure-washing.html">Pressure Washing</a>
-          <a href="pressure-washing.html#soft-washing">Soft Washing</a>
+          <a href="soft-washing.html">Soft Washing</a>
           <a href="window-cleaning.html">Window Cleaning</a>
           <a href="exterior-painting.html">Exterior Painting</a>
           <a href="landscaping.html">Landscaping</a>
@@ -30,6 +31,7 @@
       </div>
       <a href="residential.html">Residential</a>
       <a href="commercial.html">Commercial</a>
+      <a href="portfolio.html">Portfolio</a>
       <a href="maintenance-plans.html">Care Plans</a>
       <a class="nav-contact" href="tel:+19545885359">954-588-5359</a>
       <a class="nav-contact" href="mailto:info@ppwexteriorservices.com">info@ppwexteriorservices.com</a>
@@ -120,17 +122,26 @@
         <p>Each service has its own dedicated experience, scope, and scheduling options.</p>
       </header>
       <div class="service-rail">
-        <a class="service-panel" href="pressure-washing.html" style="--panel-image:url('https://images.pexels.com/photos/5652626/pexels-photo-5652626.jpeg?auto=compress&cs=tinysrgb&w=1800')">
+        <a class="service-panel" href="pressure-washing.html" style="--panel-image:url('assets/portfolio/fort-lauderdale-driveway-after.jpg')">
           <span class="service-index">01</span>
           <div class="service-body">
-            <span class="service-kicker">Exterior Cleaning</span>
-            <h3>Pressure &amp; Soft Washing</h3>
-            <p>Hardscapes and service areas, plus gentler soft washing for siding, stucco and roofs.</p>
+            <span class="service-kicker">Hardscapes</span>
+            <h3>Pressure Washing</h3>
+            <p>Driveways, pavers, pool decks, and commercial hardscapes restored with the right pressure for the material.</p>
+            <span class="service-link">Explore service</span>
+          </div>
+        </a>
+        <a class="service-panel" href="soft-washing.html" style="--panel-image:url('assets/portfolio/tpo-roof-cleaned.jpg')">
+          <span class="service-index">02</span>
+          <div class="service-body">
+            <span class="service-kicker">Low Pressure</span>
+            <h3>Soft Washing</h3>
+            <p>Roofs, stucco, siding, and screen enclosures cleaned without blasting the finish.</p>
             <span class="service-link">Explore service</span>
           </div>
         </a>
         <a class="service-panel" href="window-cleaning.html" style="--panel-image:url('https://images.pexels.com/photos/34668154/pexels-photo-34668154.jpeg?auto=compress&cs=tinysrgb&w=1800')">
-          <span class="service-index">02</span>
+          <span class="service-index">03</span>
           <div class="service-body">
             <span class="service-kicker">Glass Care</span>
             <h3>Window Cleaning</h3>
@@ -138,17 +149,17 @@
             <span class="service-link">Explore service</span>
           </div>
         </a>
-        <a class="service-panel" href="exterior-painting.html" style="--panel-image:url('https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=1800')">
-          <span class="service-index">03</span>
+        <a class="service-panel" href="exterior-painting.html" style="--panel-image:url('assets/portfolio/stamped-concrete-paint-after.jpg')">
+          <span class="service-index">04</span>
           <div class="service-body">
             <span class="service-kicker">Finish Work</span>
             <h3>Exterior Painting</h3>
-            <p>Body, trim and commercial exteriors—often after a wash so the finish lasts.</p>
+            <p>Body, trim, and stamped concrete—often after a wash so the finish lasts.</p>
             <span class="service-link">Explore service</span>
           </div>
         </a>
         <a class="service-panel" href="landscaping.html" style="--panel-image:url('https://images.pexels.com/photos/32208897/pexels-photo-32208897.jpeg?auto=compress&cs=tinysrgb&w=1800')">
-          <span class="service-index">04</span>
+          <span class="service-index">05</span>
           <div class="service-body">
             <span class="service-kicker">Property Appearance</span>
             <h3>Landscaping</h3>
@@ -157,6 +168,27 @@
           </div>
         </a>
       </div>
+    </div>
+  </section>
+
+  <section class="section section-stone">
+    <div class="container">
+      <header class="section-intro">
+        <p class="eyebrow">Our Work</p>
+        <h2>Drag to see before and after.</h2>
+        <p>The same slider used in our portfolio—grab the handle and slide.</p>
+      </header>
+      <div class="portfolio-featured">
+        <div class="ba-slider" data-start="48">
+          <img class="ba-after" src="assets/portfolio/fort-lauderdale-driveway-after.jpg" alt="Fort Lauderdale driveway after pressure washing">
+          <img class="ba-before" src="assets/portfolio/fort-lauderdale-driveway-before.jpg" alt="Fort Lauderdale driveway before pressure washing">
+          <div class="ba-handle" aria-hidden="true"><span>‹ ›</span></div>
+          <span class="ba-label ba-label-before">Before</span>
+          <span class="ba-label ba-label-after">After</span>
+          <input class="ba-range" type="range" min="0" max="100" value="48" aria-label="Compare Fort Lauderdale driveway before and after">
+        </div>
+      </div>
+      <p class="portfolio-cta"><a class="btn btn-ink" href="portfolio.html">View the full portfolio</a></p>
     </div>
   </section>
 
@@ -274,7 +306,7 @@
         <h4>Services</h4>
         <div class="footer-links">
           <a href="pressure-washing.html">Pressure Washing</a>
-          <a href="pressure-washing.html#soft-washing">Soft Washing</a>
+          <a href="soft-washing.html">Soft Washing</a>
           <a href="window-cleaning.html">Window Cleaning</a>
           <a href="exterior-painting.html">Exterior Painting</a>
           <a href="landscaping.html">Landscaping</a>
@@ -286,6 +318,7 @@
         <div class="footer-links">
           <a href="residential.html">Residential</a>
           <a href="commercial.html">Commercial</a>
+          <a href="portfolio.html">Portfolio</a>
           <a href="commercial.html">Property Managers</a>
           <a href="commercial.html">Restaurants &amp; Retail</a>
         </div>

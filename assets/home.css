@@ -113,9 +113,14 @@ button {
   height: 96px;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: center;
+  align-items: stretch;
   gap: 24px;
   position: relative;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
 }
 
 .brand img {
@@ -178,6 +183,12 @@ button {
   position: relative;
 }
 
+.nav-item.has-sub {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+}
+
 .nav-parent {
   background: none;
   border: 0;
@@ -188,6 +199,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  height: 100%;
 }
 
 .nav-parent .caret {
@@ -202,7 +214,7 @@ button {
 .nav-sub {
   display: none;
   position: absolute;
-  top: calc(100% + 6px);
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
   min-width: 220px;
@@ -212,6 +224,15 @@ button {
   border-radius: 10px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   z-index: 120;
+}
+
+.nav-sub::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 12px;
 }
 
 .nav-sub a {
@@ -241,6 +262,7 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
   height: 42px;
   padding: 0 16px;
   background: var(--lime);
@@ -257,6 +279,7 @@ button {
 
 .menu {
   display: none;
+  align-self: center;
   border: 1px solid rgba(255, 255, 255, 0.28);
   background: transparent;
   color: #fff;
