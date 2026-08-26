@@ -9,7 +9,7 @@
   background: #0a120c;
   cursor: ew-resize;
   user-select: none;
-  touch-action: none;
+  touch-action: pan-y;
   box-shadow: 0 24px 70px rgba(7, 16, 10, 0.18);
 }
 
@@ -90,7 +90,8 @@
   z-index: 5;
   appearance: none;
   background: transparent;
-  pointer-events: none;
+  pointer-events: auto;
+  touch-action: pan-y;
 }
 
 .portfolio-filters {

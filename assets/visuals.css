@@ -129,8 +129,18 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(5, 12, 7, 0.92), rgba(5, 12, 7, 0.62) 52%, rgba(5, 12, 7, 0.38));
+  background: linear-gradient(90deg, rgba(5, 12, 7, 0.88) 0%, rgba(5, 12, 7, 0.5) 38%, rgba(5, 12, 7, 0.08) 68%, transparent 100%);
   pointer-events: none;
+  z-index: 1;
+}
+
+.subhero.theme-glass .window-frame {
+  left: 46%;
+  right: 4%;
+  top: 16%;
+  bottom: 10%;
+  inset: unset;
+  z-index: 0;
 }
 
 .service-panel.theme-glass::before,
@@ -158,10 +168,214 @@
   min-height: 500px;
 }
 
+@keyframes ken {
+  from { transform: scale(1.04) translate3d(0, 0, 0); }
+  to { transform: scale(1.16) translate3d(-2.5%, 1.5%, 0); }
+}
+
+.ken {
+  animation: ken 22s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+.ken-slow { animation-duration: 32s; }
+.ken-delay { animation-duration: 26s; animation-delay: -8s; }
+
+.filmstrip,
+.work-strip {
+  overflow: hidden;
+  background: #050b07;
+  border-block: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.filmstrip-track {
+  display: flex;
+  gap: 10px;
+  width: max-content;
+  padding: 12px 0;
+  animation: film-scroll 55s linear infinite;
+}
+
+.filmstrip:hover .filmstrip-track,
+.work-strip:hover .filmstrip-track {
+  animation-play-state: paused;
+}
+
+@keyframes film-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.filmstrip figure {
+  position: relative;
+  margin: 0;
+  width: 280px;
+  flex: 0 0 280px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.filmstrip figure img,
+.work-strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.filmstrip figcaption {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 1;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(5, 12, 7, 0.72);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.work-strip .filmstrip-track {
+  padding: 0;
+  gap: 0;
+}
+
+.work-strip img {
+  width: 240px;
+  height: 168px;
+  flex: 0 0 240px;
+}
+
+.scene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: #07140e;
+}
+
+.scene-fill {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scene > span,
+.scene-fill > span {
+  position: absolute;
+  pointer-events: none;
+}
+
+.scene-glass .scene-sky,
+.scene-sky {
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 70% 18%, rgba(140, 255, 0, 0.18), transparent 55%),
+    linear-gradient(180deg, #1a3a48 0%, #0c221c 48%, #07100a 100%);
+}
+
+.window-frame {
+  inset: 10% 8%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 7px;
+  padding: 10px;
+  background: linear-gradient(160deg, #3d4a45, #1a2420);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.window-frame span {
+  position: relative;
+  min-height: 0;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.45), transparent 42%),
+    linear-gradient(180deg, #9ad4e6 0%, #3d8ea0 48%, #1e4f4a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+}
+
+.window-frame span::after {
+  content: "";
+  position: absolute;
+  inset: -20% 40% -20% -30%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: ppw-shine 6.5s ease-in-out infinite;
+}
+
+.scene-sheen {
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.08) 50%, transparent 60%);
+  animation: ppw-shine 9s ease-in-out infinite;
+}
+
+.scene-leaf .leaf-sky,
+.leaf-sky {
+  inset: 0;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(140, 255, 0, 0.35), transparent 32%),
+    linear-gradient(180deg, #17301c 0%, #0c1c10 55%, #07100a 100%);
+}
+
+.leaf-sun {
+  width: 28%;
+  aspect-ratio: 1;
+  top: 8%;
+  right: 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(140, 255, 0, 0.55), rgba(140, 255, 0, 0.05) 62%, transparent 70%);
+  filter: blur(6px);
+  animation: ppw-drift 16s ease-in-out infinite;
+}
+
+.leaf-canopy {
+  left: -10%;
+  right: -10%;
+  top: -8%;
+  height: 42%;
+  background:
+    radial-gradient(ellipse 40% 80% at 18% 80%, #1f5a28 0 42%, transparent 43%),
+    radial-gradient(ellipse 36% 90% at 48% 90%, #164820 0 40%, transparent 41%),
+    radial-gradient(ellipse 44% 85% at 82% 78%, #22632c 0 44%, transparent 45%);
+  animation: canopy-sway 8s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+@keyframes canopy-sway {
+  0%, 100% { transform: rotate(-1.2deg); }
+  50% { transform: rotate(1.6deg); }
+}
+
+.leaf-blades {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48%;
+  background:
+    repeating-linear-gradient(96deg, transparent 0 10px, rgba(82, 219, 0, 0.18) 10px 12px),
+    linear-gradient(180deg, transparent, rgba(20, 70, 28, 0.85) 40%, #0a1a0c);
+}
+
+.glass-photo.scene,
+.landscape-photo.scene {
+  min-height: 500px;
+  border-radius: 26px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .v-orb,
   .v-shine,
-  .v-ripple {
+  .v-ripple,
+  .ken,
+  .filmstrip-track,
+  .window-frame span::after,
+  .scene-sheen,
+  .leaf-sun,
+  .leaf-canopy {
     animation: none !important;
   }
 }
