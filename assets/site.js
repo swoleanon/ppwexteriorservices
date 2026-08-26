@@ -1,4 +1,11 @@
 
+const siteNav = document.querySelector('.site-nav');
+const setNavScroll = () => {
+  siteNav?.classList.toggle('is-scrolled', window.scrollY > 20);
+};
+setNavScroll();
+window.addEventListener('scroll', setNavScroll, { passive: true });
+
 const menu = document.getElementById('menuBtn');
 const nav = document.getElementById('navLinks');
 if (menu && nav) {
