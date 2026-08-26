@@ -242,15 +242,6 @@ textarea{min-height:120px;resize:vertical}
 form .btn{width:100%}
 .form-status{grid-column:1/-1;margin:0;min-height:1.2em;font-size:.88rem;font-weight:700;color:#b42318}
 .optional{font-weight:650;color:var(--muted)}
-.field-hint{display:block;font-size:.76rem;color:var(--muted);line-height:1.4}
-.field-hint.ok{color:#3c8200}
-.field-hint.warn{color:#9a6700}
-.address-field{position:relative}
-.address-combo{position:relative}
-.address-combo gmp-place-autocomplete{display:block;width:100%}
-.pac-container{z-index:3000;border-radius:12px;border:1px solid rgba(7,16,10,.14);box-shadow:var(--shadow);font-family:inherit;margin-top:4px}
-.pac-item{padding:10px 12px;font-size:.9rem;cursor:pointer}
-.pac-item:hover,.pac-item-selected{background:#eaffd5}
 .file-drop{position:relative;display:grid;gap:4px;place-items:center;padding:18px 16px;border:1px dashed rgba(7,16,10,.22);border-radius:12px;background:#fbfcfa;cursor:pointer;text-align:center;font-size:.88rem;font-weight:700}
 .file-drop:hover,.file-drop:focus-within{border-color:#64c900;background:#f4ffe6}
 .file-drop input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
