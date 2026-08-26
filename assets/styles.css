@@ -247,10 +247,10 @@ form .btn{width:100%}
 .field-hint.warn{color:#9a6700}
 .address-field{position:relative}
 .address-combo{position:relative}
-.address-results{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;margin:0;padding:6px;list-style:none;background:#fff;border:1px solid rgba(7,16,10,.14);border-radius:12px;box-shadow:var(--shadow);max-height:240px;overflow:auto}
-.address-results li{margin:0}
-.address-results button{width:100%;text-align:left;border:0;background:transparent;border-radius:8px;padding:10px 12px;font:inherit;cursor:pointer;color:var(--ink)}
-.address-results button:hover,.address-results button[aria-selected="true"]{background:#eaffd5}
+.address-combo gmp-place-autocomplete{display:block;width:100%}
+.pac-container{z-index:3000;border-radius:12px;border:1px solid rgba(7,16,10,.14);box-shadow:var(--shadow);font-family:inherit;margin-top:4px}
+.pac-item{padding:10px 12px;font-size:.9rem;cursor:pointer}
+.pac-item:hover,.pac-item-selected{background:#eaffd5}
 .file-drop{position:relative;display:grid;gap:4px;place-items:center;padding:18px 16px;border:1px dashed rgba(7,16,10,.22);border-radius:12px;background:#fbfcfa;cursor:pointer;text-align:center;font-size:.88rem;font-weight:700}
 .file-drop:hover,.file-drop:focus-within{border-color:#64c900;background:#f4ffe6}
 .file-drop input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}

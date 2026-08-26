@@ -5,106 +5,124 @@ if(menu && nav) menu.addEventListener('click',()=>nav.classList.toggle('open'));
 document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',()=>nav?.classList.remove('open')));
 const year=document.getElementById('year'); if(year) year.textContent=new Date().getFullYear();
 
-function escapeHtml(value){
-  return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const SOUTH_FLORIDA = { south: 25.14, west: -80.89, north: 26.98, east: -79.96 };
+
+function loadGoogleMaps(key){
+  if (window.google?.maps?.importLibrary) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-ppw-maps]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', reject);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=weekly&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    script.dataset.ppwMaps = 'true';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Google Maps failed to load'));
+    document.head.appendChild(script);
+  });
 }
 
-function formatAddress(props){
-  const street = [props.housenumber, props.street || props.name].filter(Boolean).join(' ');
-  const locality = props.city || props.town || props.village || props.county || '';
-  const region = props.state || '';
-  const zip = props.postcode || '';
-  return [street, [locality, region].filter(Boolean).join(', '), zip].filter(Boolean).join(', ').replace(/\s+,/g, ',');
+function confirmAddress(value, input, verified, hint){
+  if (input) input.value = value;
+  if (verified) verified.value = 'yes';
+  if (hint) {
+    hint.textContent = 'Address confirmed.';
+    hint.className = 'field-hint ok';
+  }
 }
 
-function initAddressSearch(){
+async function initGoogleAutocomplete(input, verified, hint){
+  const bounds = SOUTH_FLORIDA;
+  try {
+    const { PlaceAutocompleteElement } = await google.maps.importLibrary('places');
+    if (typeof PlaceAutocompleteElement === 'function') {
+      const widget = new PlaceAutocompleteElement({
+        includedRegionCodes: ['us'],
+        includedPrimaryTypes: ['street_address', 'premise'],
+        locationBias: bounds,
+        requestedLanguage: 'en'
+      });
+      widget.setAttribute('placeholder', 'Start typing the street address');
+      const mount = document.getElementById('address-autocomplete') || input.parentElement;
+      input.type = 'hidden';
+      input.removeAttribute('required');
+      input.removeAttribute('placeholder');
+      mount.appendChild(widget);
+
+      widget.addEventListener('gmp-select', async (event) => {
+        const prediction = event.placePrediction;
+        if (!prediction) return;
+        const place = prediction.toPlace();
+        await place.fetchFields({ fields: ['formattedAddress'] });
+        confirmAddress(place.formattedAddress || '', input, verified, hint);
+      });
+
+      widget.addEventListener('gmp-placeselect', async (event) => {
+        const place = event.place;
+        if (!place) return;
+        if (place.fetchFields) await place.fetchFields({ fields: ['formattedAddress'] });
+        confirmAddress(place.formattedAddress || place.formatted_address || '', input, verified, hint);
+      });
+      return;
+    }
+  } catch (error) {
+    // Fall through to the classic Autocomplete widget.
+  }
+
+  const Autocomplete = google.maps.places?.Autocomplete;
+  if (!Autocomplete) throw new Error('Places Autocomplete is unavailable');
+  const autocomplete = new Autocomplete(input, {
+    types: ['address'],
+    componentRestrictions: { country: 'us' },
+    fields: ['formatted_address'],
+    bounds: new google.maps.LatLngBounds(
+      { lat: bounds.south, lng: bounds.west },
+      { lat: bounds.north, lng: bounds.east }
+    ),
+    strictBounds: false
+  });
+  autocomplete.addListener('place_changed', () => {
+    const place = autocomplete.getPlace();
+    if (place?.formatted_address) confirmAddress(place.formatted_address, input, verified, hint);
+  });
+}
+
+async function initAddressSearch(){
   const input = document.getElementById('address');
-  const list = document.getElementById('address-results');
   const hint = document.getElementById('address-hint');
   const verified = document.getElementById('address_verified');
-  if(!input || !list) return;
+  if (!input) return;
 
-  let timer = 0;
-  let items = [];
-  let active = -1;
-  let currentAbort = null;
-
-  const close = ()=>{
-    list.hidden = true;
-    list.innerHTML = '';
-    input.setAttribute('aria-expanded','false');
-    active = -1;
-  };
-
-  const markVerified = (value)=>{
-    input.value = value;
-    if(verified) verified.value = 'yes';
-    if(hint){
-      hint.textContent = 'Address confirmed.';
-      hint.className = 'field-hint ok';
-    }
-    close();
-  };
-
-  const render = ()=>{
-    list.innerHTML = items.map((item,i)=>`<li role="option"><button type="button" aria-selected="${i===active}">${escapeHtml(item.label)}</button></li>`).join('');
-    list.hidden = items.length === 0;
-    input.setAttribute('aria-expanded', items.length ? 'true' : 'false');
-    [...list.querySelectorAll('button')].forEach((btn,i)=>{
-      btn.addEventListener('mousedown', e=>e.preventDefault());
-      btn.addEventListener('click', ()=>markVerified(items[i].label));
-    });
-  };
-
-  const search = async (query)=>{
-    if(currentAbort) currentAbort.abort();
-    currentAbort = new AbortController();
-    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=26.122&lon=-80.137&limit=7&lang=en`;
-    const res = await fetch(url, { signal: currentAbort.signal, headers: { Accept: 'application/json' } });
-    const data = await res.json();
-    items = (data.features || [])
-      .filter(f => {
-        const c = (f.properties?.country || f.properties?.countrycode || '').toLowerCase();
-        return c === 'united states' || c === 'us' || c === 'usa' || !c;
-      })
-      .map(f => ({ label: formatAddress(f.properties || {}) }))
-      .filter(item => item.label.length > 5);
-    const seen = new Set();
-    items = items.filter(item => { if(seen.has(item.label)) return false; seen.add(item.label); return true; });
-    active = items.length ? 0 : -1;
-    render();
-    if(!items.length && hint){
-      hint.textContent = 'No matching addresses yet. Include the city, such as Fort Lauderdale, FL.';
+  const key = window.PPW_GOOGLE_MAPS_KEY;
+  if (!key) {
+    if (hint) {
+      hint.textContent = 'Add a Google Maps API key in assets/maps-key.js to enable address suggestions.';
       hint.className = 'field-hint warn';
     }
-  };
+    return;
+  }
 
-  input.addEventListener('input', ()=>{
-    if(verified) verified.value = 'no';
-    if(hint){
-      hint.textContent = 'Keep typing, then choose the matching address so we can confirm the location.';
-      hint.className = 'field-hint';
-    }
-    const query = input.value.trim();
-    clearTimeout(timer);
-    if(query.length < 4){ close(); return; }
-    timer = setTimeout(()=>search(query).catch(()=>{
-      if(hint){
-        hint.textContent = 'Address search is unavailable. Enter the full street address, city, and ZIP.';
-        hint.className = 'field-hint warn';
+  try {
+    await loadGoogleMaps(key);
+    await initGoogleAutocomplete(input, verified, hint);
+    input.addEventListener('input', () => {
+      if (verified) verified.value = 'no';
+      if (hint) {
+        hint.textContent = 'Start typing, then choose your address from the Google suggestions.';
+        hint.className = 'field-hint';
       }
-    }), 280);
-  });
-
-  input.addEventListener('keydown', e=>{
-    if(list.hidden || !items.length) return;
-    if(e.key === 'ArrowDown'){ e.preventDefault(); active = (active + 1) % items.length; render(); }
-    if(e.key === 'ArrowUp'){ e.preventDefault(); active = (active - 1 + items.length) % items.length; render(); }
-    if(e.key === 'Enter' && active >= 0){ e.preventDefault(); markVerified(items[active].label); }
-    if(e.key === 'Escape') close();
-  });
-
-  input.addEventListener('blur', ()=>setTimeout(close, 150));
+    });
+  } catch (error) {
+    if (hint) {
+      hint.textContent = 'Google address search could not load. Enter the full street address, city, and ZIP.';
+      hint.className = 'field-hint warn';
+    }
+  }
 }
 
 function initPhotoPreview(){

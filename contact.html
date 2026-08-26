@@ -38,11 +38,10 @@
 <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required placeholder="Email address" autocomplete="email"></div>
 <div class="field full address-field">
   <label for="address">Property Address</label>
-  <div class="address-combo">
-    <input id="address" name="address" required placeholder="Start typing the street address" autocomplete="off" aria-autocomplete="list" aria-expanded="false" aria-controls="address-results">
-    <ul id="address-results" class="address-results" hidden role="listbox"></ul>
+  <div class="address-combo" id="address-autocomplete">
+    <input id="address" name="address" required placeholder="Start typing the street address" autocomplete="off">
   </div>
-  <small id="address-hint" class="field-hint">Keep typing, then choose the matching address so we can confirm the location.</small>
+  <small id="address-hint" class="field-hint">Start typing, then choose your address from the Google suggestions.</small>
   <input type="hidden" name="address_verified" id="address_verified" value="no">
 </div>
 <div class="field"><label for="property_type">Property Type</label><select id="property_type" name="property_type"><option>Residential</option><option>Restaurant / Retail</option><option>Office / Commercial</option><option>HOA / Condominium</option><option>Property Management</option><option>Other</option></select></div>
@@ -79,6 +78,7 @@
     <div class="footer-bottom"><span>© <span id="year"></span> Preferred Power Washing. All rights reserved.</span><span>PPW Exterior Property Services</span></div>
   </div>
 </footer>
+<script src="assets/maps-key.js"></script>
 <script src="assets/site.js"></script>
 
 </body></html>
