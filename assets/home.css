@@ -467,7 +467,12 @@ h3 {
 
 .section-intro {
   max-width: 640px;
-  margin-bottom: 48px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+
+.section-intro .eyebrow {
+  justify-content: center;
 }
 
 .section-intro h2 {
@@ -500,10 +505,10 @@ h3 {
 .hero-collage {
   grid-area: 1 / 1;
   display: grid;
-  grid-template-columns: 1.5fr 0.9fr 0.85fr;
-  grid-template-rows: 1.2fr 0.8fr;
-  gap: 6px;
-  padding: 8px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  padding: 10px;
   min-height: 100svh;
 }
 
@@ -514,11 +519,23 @@ h3 {
   background-position: center;
 }
 
-.hero-shot:first-child {
+.hero-shot:nth-child(1) {
+  grid-column: 1;
   grid-row: 1 / -1;
 }
 
-.hero-shot:last-child {
+.hero-shot:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.hero-shot:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.hero-shot:nth-child(4) {
+  grid-column: 3;
   grid-row: 1 / -1;
 }
 
@@ -529,8 +546,9 @@ h3 {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 0 0 48px;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 108px 0;
   max-width: none;
   animation: heroCopyIn 0.85s ease-out 0.15s both;
 }
@@ -816,9 +834,10 @@ h3 {
 
 .service-bento {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  grid-template-rows: minmax(230px, 28vh) minmax(230px, 28vh);
+  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   gap: 12px;
+  min-height: 540px;
 }
 
 .tile {
@@ -926,11 +945,16 @@ h3 {
   position: relative;
   z-index: 2;
   padding: 32px 28px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .audience-tag {
   display: inline-block;
-  margin-bottom: 14px;
+  margin-bottom: 0;
   padding: 5px 10px;
   font-size: 0.68rem;
   font-weight: 700;
@@ -943,7 +967,7 @@ h3 {
 
 .audience-copy h3 {
   font-size: clamp(1.5rem, 2.4vw, 2.05rem);
-  margin-bottom: 16px;
+  margin: 0;
   max-width: none;
 }
 
@@ -1456,12 +1480,15 @@ footer {
     grid-template-rows: 1.35fr 0.75fr;
   }
 
-  .hero-shot:first-child {
+  .hero-shot:nth-child(1) {
     grid-column: 1 / -1;
     grid-row: auto;
   }
 
-  .hero-shot:last-child {
+  .hero-shot:nth-child(2),
+  .hero-shot:nth-child(3),
+  .hero-shot:nth-child(4) {
+    grid-column: auto;
     grid-row: auto;
   }
 
