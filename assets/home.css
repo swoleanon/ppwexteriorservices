@@ -529,12 +529,69 @@ h3 {
   background: #07100a;
 }
 
+.hero::before {
+  content: "";
+  position: absolute;
+  right: -12%;
+  top: -30%;
+  width: 62%;
+  height: 90%;
+  background: radial-gradient(ellipse at center, rgba(140, 255, 0, 0.16), transparent 68%);
+  pointer-events: none;
+}
+
 .hero-inner {
-  padding: 148px 0 56px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 38rem) minmax(280px, 1fr);
+  gap: 32px;
+  align-items: center;
+  padding: 132px 0 36px;
 }
 
 .hero-copy {
+  position: relative;
+  z-index: 1;
   max-width: 38rem;
+}
+
+.hero-still {
+  position: relative;
+  height: min(54vh, 480px);
+}
+
+.hero-still img {
+  position: absolute;
+  display: block;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
+}
+
+.still-a {
+  width: 86%;
+  height: 88%;
+  right: -10%;
+  top: 8%;
+  object-position: 70% 85%;
+}
+
+.still-b {
+  width: 50%;
+  height: 54%;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  object-position: center 40%;
+}
+
+.still-c {
+  width: 34%;
+  height: 38%;
+  right: 10%;
+  top: 0;
+  z-index: 1;
+  object-position: center 45%;
 }
 
 .brand-lockup {
@@ -551,7 +608,7 @@ h3 {
   margin-bottom: 14px;
   color: #fff;
   max-width: 13ch;
-  font-size: clamp(2.1rem, 4.4vw, 3.5rem);
+  font-size: clamp(2.35rem, 4.8vw, 3.85rem);
 }
 
 .hero-lead {
@@ -607,14 +664,14 @@ h3 {
 }
 
 .filmstrip-track {
-  padding: 18px 0;
-  opacity: 0.92;
+  padding: 10px 0 22px;
+  opacity: 1;
 }
 
 .filmstrip figure {
-  width: 210px;
-  flex-basis: 210px;
-  aspect-ratio: 16 / 10;
+  width: 248px;
+  flex-basis: 248px;
+  aspect-ratio: 3 / 2;
   border-radius: 8px;
 }
 
@@ -1436,7 +1493,21 @@ body > footer {
   }
 
   .hero-inner {
-    padding: 120px 0 40px;
+    display: block;
+    padding: 120px 0 36px;
+  }
+
+  .hero-still {
+    display: none;
+  }
+
+  .hero::before {
+    right: auto;
+    left: -20%;
+    top: -40%;
+    width: 80%;
+    height: 70%;
+    opacity: 0.55;
   }
 
   .nav-links.open {
