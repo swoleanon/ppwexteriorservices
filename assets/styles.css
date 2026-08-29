@@ -250,13 +250,13 @@ p.lead{font-size:1.08rem;max-width:700px}
 .reviews-copy h2{font-size:clamp(1.35rem,2.4vw,2rem);max-width:22ch;margin:0}
 .reviews-copy p{margin:8px 0 0;color:var(--muted-dark)}
 .reviews-band .btn{justify-self:start}
-.reviews-grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:0 0 48px}
-.review-card{display:flex;flex-direction:column;gap:12px;padding:22px 20px 18px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.04)}
+.reviews-grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start;padding:0 0 48px}
+.review-card{display:grid;gap:12px;padding:20px 20px 16px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:#152019}
 .review-card .review-stars{filter:none}
-.review-card p{margin:0;color:#e8eee9;font-size:.95rem;line-height:1.5;flex:1}
-.review-card footer{display:grid;gap:2px}
-.review-card strong{color:#fff;font-family:var(--font-display);font-size:.9rem}
-.review-card footer span{color:var(--muted-dark);font-size:.75rem}
+.review-card p{margin:0;color:#f3f6f3;font-size:.95rem;line-height:1.5}
+.review-by{display:grid;gap:2px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12)}
+.review-by strong{color:#fff;font-family:var(--font-display);font-size:.9rem}
+.review-by span{color:#b8c3bb;font-size:.75rem}
 .reviews-highlight{display:flex;align-items:center;gap:12px;margin:22px 0 0;padding:14px 16px;border:1px solid rgba(140,255,0,.28);border-radius:12px;background:rgba(140,255,0,.08);color:#fff;max-width:420px}
 .reviews-highlight b{display:block;font-family:var(--font-display);font-size:.95rem}
 .reviews-highlight small{display:block;color:#b9c3bc;font-size:.78rem;margin-top:2px}
@@ -358,7 +358,7 @@ form .btn{width:100%}
 .photo-previews img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid rgba(7,16,10,.12)}
 
 /* footer */
-footer{background:#050b07;color:var(--muted-dark);padding:56px 0 28px}
+body>footer{background:#050b07;color:var(--muted-dark);padding:56px 0 28px}
 .footer-grid{display:grid;grid-template-columns:1.3fr .8fr .8fr .9fr;gap:36px}
 .footer-logo{width:min(300px,100%);height:auto;margin-bottom:16px}
 .footer-grid p{font-size:.84rem;max-width:32ch;line-height:1.55;margin:0}
