@@ -196,3 +196,12 @@ if (quoteForm) {
     }
   });
 }
+
+(function loadPromoPopup() {
+  if (document.querySelector('script[data-ppw-promo]')) return;
+  const script = document.createElement('script');
+  script.src = 'assets/promo-popup.js';
+  script.defer = true;
+  script.dataset.ppwPromo = '1';
+  document.body.appendChild(script);
+})();
