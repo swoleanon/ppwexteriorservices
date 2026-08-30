@@ -251,62 +251,22 @@
   color: #fff;
 }
 
-.promo-panel-success .promo-desc {
+.promo-panel-success .promo-desc-primary {
   margin-inline: auto;
+  color: #e8eee9;
 }
 
-.promo-code-box {
-  margin: 28px 0 24px;
-  padding: 20px 18px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.promo-panel-success .promo-desc-secondary {
+  margin: 10px auto 0;
+  max-width: 34ch;
+  font-size: 0.9rem;
 }
 
-.promo-code-label {
-  display: block;
-  margin-bottom: 8px;
-  font-family: var(--font-display, "Outfit", ui-sans-serif, system-ui, sans-serif);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #9aa69d;
-}
-
-.promo-code-value {
-  display: block;
-  font-family: var(--font-display, "Outfit", ui-sans-serif, system-ui, sans-serif);
-  font-size: clamp(1.35rem, 4vw, 1.65rem);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--lime, #8cff00);
-}
-
-.promo-quote-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 50px;
-  border-radius: 8px;
-  font-family: var(--font-display, "Outfit", ui-sans-serif, system-ui, sans-serif);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: var(--lime, #8cff00);
-  color: var(--ink, #07100a);
-  transition: background 0.2s ease;
-}
-
-.promo-quote-cta:hover {
-  background: #9aff2e;
-}
-
-.promo-quote-cta:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(140, 255, 0, 0.35);
+.promo-inbox-hint {
+  margin: 18px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #6f7a72;
 }
 
 /* Contact page promo banner */

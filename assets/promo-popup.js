@@ -28,8 +28,6 @@
   const PROMO_SUFFIX_CHARS = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   const PROMO_PATTERN = /^PPW100-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/;
   const CLOSE_SUPPRESS_MS = 7 * 24 * 60 * 60 * 1000;
-  const SHOW_DELAY_MS = 10000;
-  const SCROLL_THRESHOLD = 0.4;
 
   const SKIP_PATHS = /\/(thank-you|form-error)\.html$/;
 
@@ -41,8 +39,6 @@
   let consentInput;
   let errorEl;
   let submitBtn;
-  let codeDisplay;
-  let quoteCta;
   let closeBtn;
   let lastFocused;
   let hasOpened = false;
@@ -175,13 +171,10 @@
         <div class="promo-panel promo-panel-success" id="ppwPromoSuccessPanel" hidden>
           <div class="promo-check" aria-hidden="true">&check;</div>
           <p class="promo-eyebrow">YOU'RE ALL SET</p>
-          <h2 class="promo-success-title" id="ppwPromoSuccessTitle">Check Your Inbox</h2>
-          <p class="promo-desc">Your exclusive $100 PPW welcome offer is on its way.</p>
-          <div class="promo-code-box">
-            <span class="promo-code-label">YOUR PROMO CODE</span>
-            <span class="promo-code-value" id="ppwPromoCodeDisplay"></span>
-          </div>
-          <a class="promo-quote-cta" id="ppwPromoQuoteCta" href="contact.html">GET A FREE QUOTE &rarr;</a>
+          <h2 class="promo-success-title" id="ppwPromoSuccessTitle">THANK YOU!</h2>
+          <p class="promo-desc promo-desc-primary">Your $100 PPW welcome offer is on its way.</p>
+          <p class="promo-desc promo-desc-secondary">Check your inbox for your exclusive offer and details on how to claim it.</p>
+          <p class="promo-inbox-hint">Didn't see it? Check your spam or promotions folder.</p>
         </div>
       </div>
     `;
@@ -195,8 +188,6 @@
     consentInput = backdrop.querySelector('#ppwPromoConsent');
     errorEl = backdrop.querySelector('#ppwPromoError');
     submitBtn = backdrop.querySelector('#ppwPromoSubmit');
-    codeDisplay = backdrop.querySelector('#ppwPromoCodeDisplay');
-    quoteCta = backdrop.querySelector('#ppwPromoQuoteCta');
     closeBtn = backdrop.querySelector('#ppwPromoClose');
 
     closeBtn.addEventListener('click', () => closePopup(true));
@@ -264,11 +255,9 @@
 
     formPanel.hidden = true;
     successPanel.hidden = false;
-    codeDisplay.textContent = promoCode;
-    quoteCta.href = `contact.html?promo=${encodeURIComponent(promoCode)}`;
 
     backdrop.setAttribute('aria-labelledby', 'ppwPromoSuccessTitle');
-    quoteCta.focus();
+    closeBtn?.focus();
   }
 
   async function onSubmit(event) {
@@ -304,26 +293,9 @@
     }
   }
 
-  function initTriggers() {
+  function initPopup() {
     if (shouldSkipPopup()) return;
-
-    window.setTimeout(() => openPopup(), SHOW_DELAY_MS);
-
-    const onScroll = () => {
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (docHeight <= 0) return;
-      if (window.scrollY / docHeight >= SCROLL_THRESHOLD) {
-        openPopup();
-        window.removeEventListener('scroll', onScroll);
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    if (window.matchMedia('(pointer: fine)').matches) {
-      document.documentElement.addEventListener('mouseleave', (event) => {
-        if (event.clientY <= 0) openPopup();
-      });
-    }
+    requestAnimationFrame(() => openPopup());
   }
 
   function initContactPromo() {
@@ -355,5 +327,5 @@
   }
 
   initContactPromo();
-  initTriggers();
+  initPopup();
 })();
