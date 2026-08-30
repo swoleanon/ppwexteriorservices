@@ -536,57 +536,13 @@ h3 {
 
 .hero-inner {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 36rem) minmax(300px, 1fr);
-  gap: 56px;
-  align-items: center;
-  padding: 140px 0 64px;
+  padding: 148px 0 72px;
 }
 
 .hero-copy {
   position: relative;
   z-index: 1;
-  max-width: 36rem;
-}
-
-.hero-still {
-  position: relative;
-  height: min(58vh, 540px);
-}
-
-.hero-still img {
-  position: absolute;
-  display: block;
-  object-fit: cover;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.42);
-}
-
-.still-a {
-  width: 80%;
-  height: 86%;
-  right: 0;
-  top: 10%;
-  object-position: 70% 85%;
-}
-
-.still-b {
-  width: 48%;
-  height: 52%;
-  left: 0;
-  bottom: 0;
-  z-index: 2;
-  object-position: center 40%;
-}
-
-.still-c {
-  width: 32%;
-  height: 36%;
-  right: 8%;
-  top: 0;
-  z-index: 1;
-  object-position: center 45%;
+  max-width: 38rem;
 }
 
 .brand-lockup {
@@ -655,8 +611,7 @@ h3 {
 }
 
 .home-services {
-  border-block: 1px solid var(--line-dark);
-  background: var(--ink);
+  background: var(--lime);
 }
 
 .home-services-row {
@@ -673,11 +628,11 @@ h3 {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--chrome);
+  color: var(--ink);
 }
 
 .home-services-row a:hover {
-  color: var(--lime);
+  opacity: 0.7;
 }
 
 /* ——— Reviews ——— */
@@ -1487,24 +1442,7 @@ body > footer {
   }
 
   .hero-inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 36px;
-    padding: 120px 0 40px;
-  }
-
-  .hero-still {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr 0.85fr;
-    gap: 10px;
-    height: 220px;
-  }
-
-  .hero-still img {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    height: 100%;
+    padding: 120px 0 48px;
   }
 
   .hero::before {
@@ -1693,15 +1631,6 @@ body > footer {
     grid-template-columns: 1fr 1fr;
     gap: 10px 16px;
     padding: 18px 0;
-  }
-
-  .hero-still {
-    grid-template-columns: 1fr 1fr;
-    height: 168px;
-  }
-
-  .hero-still .still-c {
-    display: none;
   }
 
   .container {
