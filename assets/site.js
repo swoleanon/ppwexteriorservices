@@ -137,6 +137,83 @@ function initPhotoPreview(){
 
 initPhotoPreview();
 
+function initPropertyViz() {
+  const root = document.getElementById('propertyVizRoot');
+  if (!root) return;
+
+  const zones = [...root.querySelectorAll('.viz-zone')];
+  const labels = [...root.querySelectorAll('.viz-label')];
+  if (!zones.length) return;
+
+  const zoneIds = zones.map((z) => z.dataset.zone).filter(Boolean);
+  let index = 0;
+
+  const setActive = (id) => {
+    zones.forEach((z) => z.classList.toggle('is-active', z.dataset.zone === id));
+    labels.forEach((l) => l.classList.toggle('is-visible', l.dataset.for === id));
+  };
+
+  setActive(zoneIds[0]);
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    zones.forEach((z) => z.classList.add('is-active'));
+    labels.forEach((l) => l.classList.add('is-visible'));
+    return;
+  }
+
+  setInterval(() => {
+    index = (index + 1) % zoneIds.length;
+    setActive(zoneIds[index]);
+  }, 3200);
+}
+
+function initPromoPopup() {
+  const backdrop = document.getElementById('promoBackdrop');
+  const closeBtn = document.getElementById('promoClose');
+  if (!backdrop || sessionStorage.getItem('ppw-promo-seen')) return;
+
+  let shown = false;
+
+  const open = () => {
+    if (shown || sessionStorage.getItem('ppw-promo-seen')) return;
+    shown = true;
+    sessionStorage.setItem('ppw-promo-seen', '1');
+    backdrop.hidden = false;
+    backdrop.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(() => backdrop.classList.add('is-open'));
+    document.body.style.overflow = 'hidden';
+  };
+
+  const close = () => {
+    backdrop.classList.remove('is-open');
+    backdrop.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    setTimeout(() => { backdrop.hidden = true; }, 350);
+  };
+
+  closeBtn?.addEventListener('click', close);
+  backdrop.addEventListener('click', (e) => {
+    if (e.target === backdrop) close();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && backdrop.classList.contains('is-open')) close();
+  });
+
+  setTimeout(open, 10000);
+
+  const onScroll = () => {
+    const scrolled = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    if (scrolled >= 0.37) {
+      open();
+      window.removeEventListener('scroll', onScroll);
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+}
+
+initPropertyViz();
+initPromoPopup();
+
 const quoteForm = document.getElementById('quote-form');
 if (quoteForm) {
   quoteForm.addEventListener('submit', async (event) => {

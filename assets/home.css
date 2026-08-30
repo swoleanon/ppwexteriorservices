@@ -1,4 +1,5 @@
 @import url("visuals.css");
+@import url("property-viz.css");
 
 /* PPW Homepage — Institutional Property Partner
    Linked only from index.html. Other pages use styles.css. */
@@ -414,6 +415,16 @@ button {
   background: rgba(255, 255, 255, 0.06);
 }
 
+.btn-outline-dark {
+  border-color: var(--line);
+  color: var(--ink);
+  background: transparent;
+}
+
+.btn-outline-dark:hover {
+  background: rgba(7, 16, 10, 0.05);
+}
+
 /* ——— Type ——— */
 .eyebrow {
   margin: 0 0 14px;
@@ -521,23 +532,10 @@ h3 {
   color: #fff;
   overflow: hidden;
   background: var(--ink);
+  min-height: min(92vh, 820px);
 }
 
-.hero::before {
-  content: "";
-  position: absolute;
-  right: -8%;
-  top: -24%;
-  width: 56%;
-  height: 80%;
-  background: radial-gradient(ellipse at center, rgba(140, 255, 0, 0.12), transparent 68%);
-  pointer-events: none;
-}
-
-.hero-inner {
-  position: relative;
-  padding: 148px 0 72px;
-}
+/* hero-inner grid lives in property-viz.css */
 
 .hero-copy {
   position: relative;
@@ -837,7 +835,7 @@ h3 {
 /* ——— Services ——— */
 .service-rail {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
@@ -1025,7 +1023,7 @@ h3 {
 /* ——— Audience ——— */
 .audience-rail {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
@@ -1083,7 +1081,11 @@ h3 {
 }
 
 .audience-copy p {
-  display: none;
+  margin: 0 0 16px;
+  color: #c8d0ca;
+  font-size: 0.92rem;
+  max-width: 36ch;
+  display: block;
 }
 
 /* ——— Care plans ——— */
@@ -1441,18 +1443,6 @@ body > footer {
     display: block;
   }
 
-  .hero-inner {
-    padding: 120px 0 48px;
-  }
-
-  .hero::before {
-    right: auto;
-    left: -20%;
-    top: -40%;
-    width: 80%;
-    height: 70%;
-    opacity: 0.45;
-  }
 
   .home-services-row {
     justify-content: flex-start;
@@ -1592,7 +1582,7 @@ body > footer {
   }
 
   .service-rail {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .service-panel {
@@ -1663,9 +1653,6 @@ body > footer {
     padding: 72px 0;
   }
 
-  .hero-inner {
-    padding: 108px 0 40px;
-  }
 
   .hero-copy {
     max-width: none;
@@ -1764,7 +1751,8 @@ body > footer {
     min-height: 360px;
   }
 
-  .audience-rail {
+  .audience-rail,
+  .service-rail {
     grid-template-columns: 1fr;
   }
 
