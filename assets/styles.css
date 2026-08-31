@@ -540,9 +540,8 @@ body>footer{background:#050b07;color:var(--muted-dark);padding:64px 0 28px;borde
 .timeline-item b{display:block;font-family:var(--font-display);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--lime-dark)}
 .timeline-item p{margin:6px 0 0;color:var(--muted)}
 
-.owner-portrait-note{margin:10px 0 0;font-size:.75rem;color:#8f9b92;text-align:center}
-.owner-portrait{max-width:380px;justify-self:end;flex-direction:column;align-items:center;position:sticky;top:108px}
-.owner-portrait img{max-height:520px;opacity:1}
+.owner-portrait{width:100%;max-width:520px;justify-self:center;flex-direction:column;align-items:center;position:sticky;top:108px}
+.owner-portrait img{max-height:650px;opacity:1}
 
 .form-block{grid-column:1/-1;margin:8px 0 4px;padding:0;border:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-block legend{padding:0 0 10px;font-family:var(--font-display);font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--lime-dark)}
@@ -576,7 +575,7 @@ details.seo-more p,details.seo-more li{color:var(--muted);font-size:.92rem}
   .compare-side + .compare-side{border-left:0;border-top:1px solid var(--line)}
   .work-masonry{columns:1}
   .freq-cell{border-right:0;border-bottom:1px solid var(--line)}
-  .owner-portrait{justify-self:start;max-width:280px;position:static}
+  .owner-portrait{justify-self:center;max-width:360px;position:static}
   .page-hero,.page-hero-inner{min-height:0}
   .page-hero-inner{padding:100px 0 40px}
 }

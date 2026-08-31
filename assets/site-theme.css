@@ -21,6 +21,8 @@
   --line-light: rgba(255, 255, 255, 0.12);
   --radius: 16px;
   --shadow: 0 18px 50px rgba(7, 16, 10, 0.1);
+  --font-block: "Bebas Neue", "Outfit", sans-serif;
+  --font-script: "Caveat", cursive;
 }
 
 html {
@@ -105,6 +107,15 @@ h3 {
   color: var(--lime-deep);
 }
 
+.eyebrow,
+.kicker,
+.brand-lockup,
+.page-proof {
+  font-family: var(--font-block);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+}
+
 .eyebrow.green::before,
 .kicker::before {
   background: var(--lime);
@@ -144,8 +155,13 @@ h3 {
   color: var(--text);
 }
 
+.home-section {
+  background: var(--surface);
+}
+
 .section.white,
 .home-results,
+.home-results-first,
 .home-paths,
 .home-final-cta {
   background: var(--surface);
@@ -282,6 +298,25 @@ main > .section.paper + .section.paper {
 
 .section.dark .eyebrow::before {
   background: var(--lime);
+}
+
+.section.dark .type-rail,
+.section.dark .freq-rail.on-dark {
+  border-color: var(--line);
+}
+
+.section.dark .type-rail span,
+.section.dark .freq-rail.on-dark .freq-cell span {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.section.dark .freq-rail.on-dark .freq-cell {
+  border-color: var(--line);
+}
+
+.section.dark .freq-rail.on-dark .freq-cell b {
+  color: var(--lime-deep);
 }
 
 .plan-main {
@@ -530,6 +565,11 @@ body:has(.contact-hero) .site-nav:not(.is-scrolled) .call-btn {
 .review-by strong,
 .review-card-clean .review-by strong {
   color: var(--text);
+  font-family: var(--font-script);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0;
 }
 
 .review-by span {
@@ -557,6 +597,14 @@ body:has(.contact-hero) .site-nav:not(.is-scrolled) .call-btn {
 
 .conversion h2 {
   color: #fff;
+}
+
+.owner-role,
+.home-final-cta .final-cta > p,
+.conversion-inner > div > p {
+  font-family: var(--font-script);
+  font-size: 1.4rem;
+  line-height: 1.25;
 }
 
 /* Improve hero text contrast while keeping photography dominant */
