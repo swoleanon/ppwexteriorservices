@@ -33,40 +33,41 @@ body {
 }
 
 /* Shared navigation */
-.site-nav {
+.site-nav,
+.site-nav.is-scrolled {
+  background: rgba(7, 16, 10, 0.78);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 30px rgba(7, 16, 10, 0.16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
 
-.site-nav.is-scrolled {
-  background: rgba(251, 252, 249, 0.96);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 8px 30px rgba(7, 16, 10, 0.07);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
+.site-nav .nav-links,
 .site-nav.is-scrolled .nav-links {
-  color: var(--text);
+  color: #fff;
   -webkit-text-stroke: 0;
-  text-shadow: none;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
 }
 
+.site-nav .nav-links > a,
+.site-nav .nav-parent,
 .site-nav.is-scrolled .nav-links > a,
 .site-nav.is-scrolled .nav-parent {
   filter: none;
 }
 
 .site-nav.is-scrolled .brand img {
-  filter: none;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.38));
 }
 
 .site-nav.is-scrolled .call-btn {
-  color: var(--ink);
-  background: transparent;
-  border-color: rgba(7, 16, 10, 0.24);
+  color: var(--lime);
+  background: rgba(7, 16, 10, 0.38);
+  border-color: var(--lime);
   box-shadow: none;
 }
 
@@ -81,9 +82,9 @@ body {
 }
 
 .site-nav.is-scrolled .menu {
-  color: var(--ink);
-  background: transparent;
-  border-color: rgba(7, 16, 10, 0.22);
+  color: #fff;
+  background: rgba(7, 16, 10, 0.54);
+  border-color: rgba(255, 255, 255, 0.22);
   box-shadow: none;
 }
 
@@ -354,11 +355,12 @@ main > .section.paper + .section.paper {
 }
 
 .signature {
-  filter: invert(1);
+  filter: none;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.28));
 }
 
 .signature.on-light {
-  filter: invert(1);
+  filter: invert(1) drop-shadow(0 2px 5px rgba(7, 16, 10, 0.1));
 }
 
 .owner-band + .reviews-band {
@@ -367,15 +369,15 @@ main > .section.paper + .section.paper {
 
 body:has(.owner-hero) .site-nav:not(.is-scrolled),
 body:has(.contact-hero) .site-nav:not(.is-scrolled) {
-  background: rgba(251, 252, 249, 0.96);
-  border-bottom: 1px solid var(--line);
+  background: rgba(7, 16, 10, 0.78);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body:has(.owner-hero) .site-nav:not(.is-scrolled) .nav-links,
 body:has(.contact-hero) .site-nav:not(.is-scrolled) .nav-links {
-  color: var(--text);
+  color: #fff;
   -webkit-text-stroke: 0;
-  text-shadow: none;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
 }
 
 body:has(.owner-hero) .site-nav:not(.is-scrolled) .nav-links > a,
@@ -387,9 +389,9 @@ body:has(.contact-hero) .site-nav:not(.is-scrolled) .nav-parent {
 
 body:has(.owner-hero) .site-nav:not(.is-scrolled) .call-btn,
 body:has(.contact-hero) .site-nav:not(.is-scrolled) .call-btn {
-  color: var(--ink);
-  background: transparent;
-  border-color: rgba(7, 16, 10, 0.24);
+  color: var(--lime);
+  background: rgba(7, 16, 10, 0.38);
+  border-color: var(--lime);
   box-shadow: none;
 }
 
