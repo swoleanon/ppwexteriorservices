@@ -321,6 +321,7 @@
     banner.className = 'promo-applied-banner';
     banner.innerHTML = `
       <strong>$100 Welcome Offer Applied</strong>
+      <span class="promo-applied-code">Promo code: ${promo}</span>
     `;
     quoteForm.insertBefore(banner, quoteForm.firstChild);
   }
