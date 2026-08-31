@@ -12,6 +12,7 @@ if (menu && nav) {
   menu.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
     menu.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('nav-open', open);
     if (!open) {
       nav.querySelectorAll('.has-sub.open').forEach((item) => {
         item.classList.remove('open');
@@ -22,7 +23,10 @@ if (menu && nav) {
 }
 
 document.querySelectorAll('#navLinks a').forEach((link) => {
-  link.addEventListener('click', () => nav?.classList.remove('open'));
+  link.addEventListener('click', () => {
+    nav?.classList.remove('open');
+    document.body.classList.remove('nav-open');
+  });
 });
 
 document.querySelectorAll('.nav-parent').forEach((btn) => {
@@ -196,3 +200,12 @@ if (quoteForm) {
     }
   });
 }
+
+(function loadPromoPopup() {
+  if (document.querySelector('script[data-ppw-promo]')) return;
+  const script = document.createElement('script');
+  script.src = 'assets/promo-popup.js';
+  script.defer = true;
+  script.dataset.ppwPromo = '1';
+  document.body.appendChild(script);
+})();
