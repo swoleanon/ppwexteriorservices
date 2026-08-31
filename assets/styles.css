@@ -556,6 +556,7 @@ details.seo-more p,details.seo-more li{color:var(--muted);font-size:.92rem}
 .reviews-lite{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
 .reviews-lite article{padding:0;border:0;background:transparent}
 .reviews-lite article:before{content:"★★★★★";display:block;margin-bottom:10px;color:#d4b84a;letter-spacing:.12em}
+.reviews-lite.has-star-markup article:before{content:none}
 .reviews-lite p{font-size:1.05rem;line-height:1.5;color:var(--text)}
 .reviews-lite .review-by{border-top-color:var(--line)}
 .reviews-lite .review-by strong{color:var(--ink)}
