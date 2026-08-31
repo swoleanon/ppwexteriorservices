@@ -9,6 +9,9 @@ window.addEventListener('scroll', setNavScroll, { passive: true });
 const menu = document.getElementById('menuBtn');
 const nav = document.getElementById('navLinks');
 if (menu && nav) {
+  menu.setAttribute('aria-expanded', 'false');
+  menu.setAttribute('aria-controls', 'navLinks');
+
   menu.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
     menu.setAttribute('aria-expanded', String(open));
@@ -22,7 +25,10 @@ if (menu && nav) {
 }
 
 document.querySelectorAll('#navLinks a').forEach((link) => {
-  link.addEventListener('click', () => nav?.classList.remove('open'));
+  link.addEventListener('click', () => {
+    nav?.classList.remove('open');
+    menu?.setAttribute('aria-expanded', 'false');
+  });
 });
 
 document.querySelectorAll('.nav-parent').forEach((btn) => {
@@ -43,6 +49,15 @@ document.querySelectorAll('.nav-parent').forEach((btn) => {
 });
 
 document.addEventListener('click', (event) => {
+  if (
+    nav?.classList.contains('open') &&
+    !event.target.closest('#navLinks') &&
+    !event.target.closest('#menuBtn')
+  ) {
+    nav.classList.remove('open');
+    menu?.setAttribute('aria-expanded', 'false');
+  }
+
   if (event.target.closest('.has-sub') || event.target.closest('#menuBtn')) return;
   document.querySelectorAll('.has-sub.open').forEach((item) => {
     item.classList.remove('open');
