@@ -239,7 +239,7 @@ if (quoteForm) {
 (function loadPromoPopup() {
   if (document.querySelector('script[data-ppw-promo]')) return;
   const script = document.createElement('script');
-  script.src = 'assets/promo-popup.js';
+  script.src = new URL('promo-popup.js', document.currentScript?.src || window.location.href).href;
   script.defer = true;
   script.dataset.ppwPromo = '1';
   document.body.appendChild(script);
