@@ -4,7 +4,7 @@
   --pos: 52%;
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 8px;
   aspect-ratio: 4 / 3;
   background: #0a120c;
   cursor: ew-resize;
@@ -160,13 +160,39 @@
   text-align: center;
 }
 
+.portfolio-featured {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.portfolio-featured article h3 {
+  font-size: 1.25rem;
+  margin: 14px 0 4px;
+}
+
+.portfolio-featured article p {
+  margin: 0;
+  color: var(--muted, #69736c);
+  font-size: 0.9rem;
+}
+
+.portfolio-featured article:first-child {
+  grid-column: 1 / -1;
+}
+
 .portfolio-featured .ba-slider {
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+}
+
+.portfolio-featured article:first-child .ba-slider {
   aspect-ratio: 16 / 9;
-  border-radius: 24px;
 }
 
 @media (max-width: 800px) {
-  .portfolio-grid {
+  .portfolio-grid,
+  .portfolio-featured {
     grid-template-columns: 1fr;
   }
 

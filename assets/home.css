@@ -112,13 +112,16 @@ button {
   left: 0;
   right: 0;
   z-index: 100;
-  background: transparent;
-  border-bottom: 0;
+  background: rgba(7, 16, 10, 0.28);
+  border-bottom: 1px solid transparent;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 .site-nav.is-scrolled {
-  background: transparent;
-  border-bottom: 0;
+  background: rgba(5, 11, 7, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .site-nav:has(.nav-links.open) {
@@ -128,7 +131,7 @@ button {
 
 .nav-inner {
   width: min(calc(100% - 24px), 1600px);
-  height: 108px;
+  height: 76px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: stretch;
@@ -143,9 +146,9 @@ button {
 }
 
 .brand img {
-  height: 76px;
+  height: 58px;
   width: auto;
-  max-width: 300px;
+  max-width: 240px;
   object-fit: contain;
   object-position: left center;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
@@ -153,15 +156,19 @@ button {
 
 .nav-links {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-end;
   align-items: center;
-  gap: 0 8px;
+  gap: 0 4px;
   flex-wrap: nowrap;
   min-width: 0;
-  font-size: clamp(0.9rem, 1.05vw, 1.0625rem);
-  font-weight: 700;
+  font-size: 0.92rem;
+  font-weight: 650;
   color: #fff;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+}
+
+body.nav-open {
+  overflow: hidden;
 }
 
 .nav-links > a,
@@ -296,17 +303,18 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 46px;
-  padding: 0 18px;
+  height: 42px;
+  padding: 0 16px;
   border: 1px solid var(--lime);
   color: var(--lime);
   background: rgba(7, 16, 10, 0.78);
   font-family: var(--font-display);
-  font-size: 0.9375rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  border-radius: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 6px;
   white-space: nowrap;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
 }
 
 .call-btn:hover {
@@ -318,15 +326,16 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 46px;
-  padding: 0 18px;
+  height: 42px;
+  padding: 0 16px;
   background: var(--lime);
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 0.9375rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  border-radius: 8px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 6px;
   white-space: nowrap;
 }
 
@@ -532,7 +541,7 @@ h3 {
   color: #fff;
   overflow: hidden;
   background: var(--ink);
-  min-height: min(88vh, 780px);
+  min-height: min(68vh, 640px);
 }
 
 .hero-photo {
@@ -571,7 +580,7 @@ h3 {
   z-index: 2;
   display: flex;
   align-items: center;
-  min-height: min(88vh, 780px);
+  min-height: min(68vh, 640px);
   padding: 112px 0 80px;
 }
 
@@ -604,6 +613,15 @@ h3 {
   font-size: 1rem;
   color: #b8c3bb;
   line-height: 1.55;
+}
+
+.hero-proof-line {
+  margin: 22px 0 0;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9aa69d;
 }
 
 .hero-actions {
@@ -733,7 +751,7 @@ h3 {
   position: relative;
   display: block;
   min-height: 460px;
-  border-radius: 14px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -796,7 +814,7 @@ h3 {
   position: relative;
   display: block;
   min-height: 520px;
-  border-radius: 14px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -857,6 +875,13 @@ h3 {
   border: 0;
   border-radius: 0;
   background: transparent;
+}
+
+.review-card-clean p {
+  margin: 0;
+  color: #e8eee9;
+  font-size: 1.05rem;
+  line-height: 1.5;
 }
 
 .review-card-clean .review-by {
@@ -1616,7 +1641,28 @@ h3 {
 body > footer {
   background: #050b07;
   color: var(--muted-on-dark);
-  padding: 56px 0 28px;
+  padding: 64px 0 28px;
+  border-top: 3px solid var(--lime);
+}
+
+.footer-wordmark {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  color: #fff;
+}
+
+.footer-areas {
+  margin: 14px 0 20px;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lime);
 }
 
 .footer-grid {
@@ -1723,7 +1769,7 @@ body > footer {
 
   .hero-inner {
     align-items: flex-end;
-    min-height: min(88vh, 780px);
+    min-height: min(68vh, 640px);
     padding: 100px 0 56px;
   }
 
@@ -1759,11 +1805,10 @@ body > footer {
 
   .nav-inner {
     grid-template-columns: minmax(0, 1fr) auto;
-    height: 88px;
+    height: 72px;
   }
 
-  .nav-links,
-  .quote-btn {
+  .nav-links {
     display: none;
   }
 

@@ -15,6 +15,7 @@ if (menu && nav) {
   menu.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
     menu.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('nav-open', open);
     if (!open) {
       nav.querySelectorAll('.has-sub.open').forEach((item) => {
         item.classList.remove('open');
@@ -28,6 +29,7 @@ document.querySelectorAll('#navLinks a').forEach((link) => {
   link.addEventListener('click', () => {
     nav?.classList.remove('open');
     menu?.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('nav-open');
   });
 });
 
