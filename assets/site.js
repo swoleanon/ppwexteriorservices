@@ -1,4 +1,24 @@
 
+// Keep every page on the same visual content boundary. Full-bleed backgrounds/media
+// can still span the viewport, but readable content stays on one shared grid.
+const boundaryStyle = document.createElement('style');
+boundaryStyle.dataset.ppwBoundaries = '1';
+boundaryStyle.textContent = `
+  :root { --ppw-content-max: 1280px; --ppw-content-inline: 80px; }
+  .container:not(.nav-inner),
+  .about-premium .about-shell {
+    width: min(var(--ppw-content-max), calc(100% - var(--ppw-content-inline))) !important;
+    margin-inline: auto !important;
+  }
+  @media (max-width: 900px) {
+    :root { --ppw-content-inline: 48px; }
+  }
+  @media (max-width: 560px) {
+    :root { --ppw-content-inline: 32px; }
+  }
+`;
+document.head.appendChild(boundaryStyle);
+
 const siteNav = document.querySelector('.site-nav');
 const setNavScroll = () => {
   siteNav?.classList.toggle('is-scrolled', window.scrollY > 20);
