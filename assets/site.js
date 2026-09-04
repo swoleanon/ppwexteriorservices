@@ -5,16 +5,166 @@ const boundaryStyle = document.createElement('style');
 boundaryStyle.dataset.ppwBoundaries = '1';
 boundaryStyle.textContent = `
   :root { --ppw-content-max: 1280px; --ppw-content-inline: 80px; }
+  html, body { max-width: 100%; overflow-x: hidden; }
   .container:not(.nav-inner),
   .about-premium .about-shell {
     width: min(var(--ppw-content-max), calc(100% - var(--ppw-content-inline))) !important;
     margin-inline: auto !important;
   }
+  main, section, footer,
+  .container, .about-shell,
+  .page-hero-copy, .premium-head, .premium-head > *,
+  .commercial-intro-grid > *, .commercial-case > *,
+  .residential-result-grid > *, .residential-reviews > *,
+  .quote-page-grid > *, .about-hero-grid > *, .about-story-grid > * {
+    min-width: 0;
+  }
+  img, video, iframe { max-width: 100%; }
+  [href^="mailto:"], [href^="tel:"], .footer-links, .cta-contact, .quote-contact-card strong {
+    overflow-wrap: anywhere;
+  }
+  table { max-width: 100%; }
+
+  @media (max-width: 1040px) {
+    .nav-inner {
+      width: calc(100% - 24px) !important;
+      margin-inline: auto !important;
+    }
+    .nav-links.open {
+      width: 100%;
+      max-width: 100%;
+      max-height: calc(100dvh - 92px) !important;
+      overscroll-behavior: contain;
+    }
+    .nav-links.open > a,
+    .nav-links.open .nav-parent,
+    .nav-links.open .nav-sub a {
+      min-height: 44px;
+    }
+  }
+
   @media (max-width: 900px) {
     :root { --ppw-content-inline: 48px; }
+    .footer-bottom { flex-wrap: wrap; }
   }
+
+  @media (max-width: 760px) {
+    .site-nav .call-btn { display: none !important; }
+    .site-nav .brand img {
+      max-width: min(172px, 50vw) !important;
+      height: auto !important;
+      max-height: 52px;
+    }
+    .site-nav .menu,
+    .site-nav .quote-btn,
+    .btn,
+    button,
+    .portfolio-filters button,
+    summary,
+    .social-link {
+      min-height: 44px;
+    }
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+    .premium-case-meta,
+    .commercial-project-meta,
+    .premium-services-footer,
+    .footer-bottom {
+      flex-wrap: wrap;
+    }
+    .about-premium .about-portrait-wrap {
+      order: -1 !important;
+      min-height: 330px !important;
+      margin-top: 0 !important;
+    }
+    .about-premium .about-portrait {
+      max-height: 390px !important;
+    }
+    .about-premium .about-hero-grid {
+      padding-top: 22px !important;
+    }
+    .about-premium .about-hero-copy {
+      padding-top: 8px !important;
+    }
+    .ba-handle span {
+      width: 48px;
+      height: 48px;
+    }
+    .promo-close {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
   @media (max-width: 560px) {
     :root { --ppw-content-inline: 32px; }
+    .site-nav .quote-btn { display: none !important; }
+    .nav-inner {
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      gap: 8px !important;
+    }
+    .site-nav .brand img {
+      max-width: min(168px, 58vw) !important;
+    }
+    .hero-actions,
+    .premium-hero-actions,
+    .about-hero-actions {
+      width: 100%;
+    }
+    .hero-actions .btn,
+    .premium-hero-actions .btn,
+    .about-hero-actions .btn {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+    .premium-case-meta,
+    .commercial-project-meta,
+    .premium-services-footer,
+    .residential-hero-meta,
+    .footer-bottom {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+    }
+    .footer-grid { grid-template-columns: 1fr !important; }
+    .footer-bottom { gap: 8px; }
+    .section,
+    .premium-section,
+    .about-premium .about-section {
+      padding-top: 68px !important;
+      padding-bottom: 68px !important;
+    }
+    .commercial-value-row {
+      grid-template-columns: 36px minmax(0, 1fr) !important;
+      gap: 12px !important;
+    }
+    .quote-contact-card,
+    .premium-quote-form-head,
+    .premium-quote-form form,
+    .commercial-case-copy,
+    .commercial-feature-copy,
+    .premium-service-copy,
+    .about-premium .about-principle,
+    .about-premium .about-review {
+      max-width: 100%;
+    }
+    .portfolio-filters {
+      gap: 10px;
+    }
+    .portfolio-filters button {
+      flex: 1 1 calc(50% - 10px);
+    }
+    details > summary {
+      padding-block: 10px;
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 380px) {
+    :root { --ppw-content-inline: 28px; }
+    .site-nav .brand img { max-width: 150px !important; }
+    .portfolio-filters button { flex-basis: 100%; }
   }
 `;
 document.head.appendChild(boundaryStyle);
