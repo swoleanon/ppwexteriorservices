@@ -91,6 +91,13 @@ document.addEventListener('click', (event) => {
 
 const year=document.getElementById('year'); if(year) year.textContent=new Date().getFullYear();
 
+// Keep the site-wide conversion language consistent with the premium brand system.
+document.querySelectorAll('.quote-btn, footer .btn-lime').forEach((button) => {
+  if (/^Get a Free Quote$/i.test(button.textContent.trim())) {
+    button.textContent = 'Request a Quote';
+  }
+});
+
 function initBeforeAfter(){
   document.querySelectorAll('.ba-slider').forEach((slider) => {
     const range = slider.querySelector('.ba-range');
