@@ -20,6 +20,11 @@ export default {
           element.setAttribute('content', mapsKey);
         },
       })
+      .on('script[src="assets/address-autocomplete.js"]', {
+        element(element) {
+          element.setAttribute('src', 'assets/address-autocomplete.js?v=google-20260907');
+        },
+      })
       .transform(response);
   },
 };
