@@ -541,7 +541,11 @@ h3 {
   color: #fff;
   overflow: hidden;
   background: var(--ink);
+<<<<<<< HEAD
   min-height: min(68vh, 640px);
+=======
+  min-height: min(88vh, 780px);
+>>>>>>> 1dcd4e820e0ef6e99e5cac333f1606c671d5383e
 }
 
 .hero-photo {
@@ -580,7 +584,11 @@ h3 {
   z-index: 2;
   display: flex;
   align-items: center;
+<<<<<<< HEAD
   min-height: min(68vh, 640px);
+=======
+  min-height: min(88vh, 780px);
+>>>>>>> 1dcd4e820e0ef6e99e5cac333f1606c671d5383e
   padding: 112px 0 80px;
 }
 
@@ -751,7 +759,11 @@ h3 {
   position: relative;
   display: block;
   min-height: 460px;
+<<<<<<< HEAD
   border-radius: 8px;
+=======
+  border-radius: 14px;
+>>>>>>> 1dcd4e820e0ef6e99e5cac333f1606c671d5383e
   overflow: hidden;
 }
 
@@ -814,7 +826,11 @@ h3 {
   position: relative;
   display: block;
   min-height: 520px;
+<<<<<<< HEAD
   border-radius: 8px;
+=======
+  border-radius: 14px;
+>>>>>>> 1dcd4e820e0ef6e99e5cac333f1606c671d5383e
   overflow: hidden;
 }
 
@@ -877,6 +893,7 @@ h3 {
   background: transparent;
 }
 
+<<<<<<< HEAD
 .review-card-clean p {
   margin: 0;
   color: #e8eee9;
@@ -884,6 +901,8 @@ h3 {
   line-height: 1.5;
 }
 
+=======
+>>>>>>> 1dcd4e820e0ef6e99e5cac333f1606c671d5383e
 .review-card-clean .review-by {
   padding-top: 10px;
   border-top: 0;
@@ -1769,7 +1788,11 @@ body > footer {
 
   .hero-inner {
     align-items: flex-end;
+<<<<<<< HEAD
     min-height: min(68vh, 640px);
+=======
+    min-height: min(88vh, 780px);
+>>>>>>> 1dcd4e820e0ef6e99e5cac333f1606c671d5383e
     padding: 100px 0 56px;
   }
 
