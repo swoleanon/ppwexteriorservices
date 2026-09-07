@@ -358,6 +358,12 @@ form .btn{width:100%}
 .file-drop small{font-weight:550;color:var(--muted)}
 .photo-previews{display:flex;flex-wrap:wrap;gap:8px}
 .photo-previews img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid rgba(7,16,10,.12)}
+.address-suggest{position:relative}
+.address-suggest-list{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:8;margin:0;padding:6px 0;list-style:none;background:#fff;border:1px solid rgba(7,16,10,.14);border-radius:8px;box-shadow:0 14px 36px rgba(7,16,10,.14);max-height:260px;overflow:auto}
+.address-suggest-list[hidden]{display:none}
+.address-suggest-list li{padding:10px 14px;cursor:pointer;font-size:.92rem;line-height:1.35;color:var(--ink)}
+.address-suggest-list li[aria-selected="true"],.address-suggest-list li:hover{background:#f4ffe6}
+.address-suggest-list small{display:block;margin-top:2px;color:var(--muted);font-size:.78rem;font-weight:550}
 
 /* footer */
 body>footer{background:#050b07;color:var(--muted-dark);padding:64px 0 28px;border-top:3px solid var(--lime)}

@@ -140,6 +140,146 @@ function initPhotoPreview(){
 }
 
 initPhotoPreview();
+initAddressSuggest();
+
+function initAddressSuggest(){
+  const input = document.getElementById('street');
+  const list = document.getElementById('address-suggestions');
+  const city = document.getElementById('city');
+  const zip = document.getElementById('zip');
+  if (!input || !list) return;
+
+  const PHOTON = 'https://photon.komoot.io/api/';
+  const BIAS = { lat: 26.1223, lon: -80.1373 };
+  let timer = 0;
+  let controller = null;
+  let items = [];
+  let active = -1;
+
+  const close = () => {
+    list.hidden = true;
+    list.innerHTML = '';
+    items = [];
+    active = -1;
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+  };
+
+  const highlight = (index) => {
+    active = index;
+    [...list.children].forEach((li, i) => {
+      li.setAttribute('aria-selected', String(i === active));
+      if (i === active) {
+        input.setAttribute('aria-activedescendant', li.id);
+        li.scrollIntoView({ block: 'nearest' });
+      }
+    });
+  };
+
+  const apply = (item) => {
+    if (!item) return;
+    input.value = item.street;
+    if (city && item.city) city.value = item.city;
+    if (zip && item.zip) zip.value = item.zip;
+    close();
+  };
+
+  const render = (next) => {
+    items = next;
+    active = next.length ? 0 : -1;
+    list.innerHTML = '';
+    if (!next.length) {
+      close();
+      return;
+    }
+    next.forEach((item, i) => {
+      const li = document.createElement('li');
+      li.id = 'address-option-' + i;
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', String(i === 0));
+      const line = document.createElement('span');
+      line.textContent = item.street;
+      const sub = document.createElement('small');
+      sub.textContent = item.detail;
+      li.append(line, sub);
+      li.addEventListener('mousedown', (event) => {
+        event.preventDefault();
+        apply(item);
+      });
+      list.appendChild(li);
+    });
+    list.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+    input.setAttribute('aria-activedescendant', 'address-option-0');
+  };
+
+  const parseFeature = (feature) => {
+    const p = feature.properties || {};
+    if (p.countrycode && p.countrycode !== 'US') return null;
+    const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ').trim();
+    if (!street) return null;
+    const cityName = p.city || p.district || '';
+    const state = p.state === 'Florida' ? 'FL' : (p.state || '');
+    const zipcode = p.postcode || '';
+    const detail = [cityName, state, zipcode].filter(Boolean).join(', ');
+    const score =
+      (p.state === 'Florida' || p.state === 'FL' ? 10 : 0) +
+      (/broward|miami-dade|palm beach/i.test(p.county || '') ? 6 : 0) +
+      (p.housenumber ? 3 : 0) +
+      (zipcode ? 1 : 0);
+    return { street, city: cityName, zip: zipcode, detail, key: (street + '|' + zipcode).toLowerCase(), score };
+  };
+
+  const search = async (query) => {
+    if (controller) controller.abort();
+    controller = new AbortController();
+    const url = `${PHOTON}?q=${encodeURIComponent(query)}&lat=${BIAS.lat}&lon=${BIAS.lon}&limit=8&lang=en`;
+    try {
+      const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
+      if (!response.ok) return;
+      const data = await response.json();
+      const seen = new Set();
+      const next = (data.features || [])
+        .map(parseFeature)
+        .filter((item) => item && !seen.has(item.key) && seen.add(item.key))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 6);
+      if (input.value.trim() === query) render(next);
+    } catch (error) {
+      if (error.name !== 'AbortError') close();
+    }
+  };
+
+  input.addEventListener('input', () => {
+    const query = input.value.trim();
+    window.clearTimeout(timer);
+    if (query.length < 3) {
+      close();
+      return;
+    }
+    timer = window.setTimeout(() => search(query), 280);
+  });
+
+  input.addEventListener('keydown', (event) => {
+    if (list.hidden || !items.length) return;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      highlight(active < items.length - 1 ? active + 1 : 0);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      highlight(active > 0 ? active - 1 : items.length - 1);
+    } else if (event.key === 'Enter' && active >= 0) {
+      event.preventDefault();
+      apply(items[active]);
+    } else if (event.key === 'Escape') {
+      close();
+    }
+  });
+
+  input.addEventListener('blur', () => {
+    window.setTimeout(close, 120);
+  });
+}
 
 const quoteForm = document.getElementById('quote-form');
 if (quoteForm) {

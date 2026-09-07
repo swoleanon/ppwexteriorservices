@@ -27,6 +27,7 @@
           <a href="window-cleaning.html">Window Cleaning</a>
           <a href="exterior-painting.html">Exterior Painting</a>
           <a href="landscaping.html">Landscaping</a>
+          <a href="junk-removal.html">Junk Removal</a>
         </div>
       </div>
       <a href="residential.html">Residential</a>
@@ -79,7 +80,11 @@
 
         <fieldset class="form-block">
           <legend>2 Property</legend>
-          <div class="field full"><label for="street">Street Address</label><input id="street" name="street" required placeholder="123 Main St" autocomplete="street-address"></div>
+          <div class="field full address-suggest">
+            <label for="street">Street Address</label>
+            <input id="street" name="street" required placeholder="Start typing the property address" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="address-suggestions" aria-haspopup="listbox">
+            <ul id="address-suggestions" class="address-suggest-list" role="listbox" hidden></ul>
+          </div>
           <div class="field"><label for="city">City</label><input id="city" name="city" required placeholder="Fort Lauderdale" autocomplete="address-level2"></div>
           <div class="field"><label for="zip">ZIP Code</label><input id="zip" name="zip" required placeholder="33301" inputmode="numeric" maxlength="10" autocomplete="postal-code"></div>
           <input type="hidden" name="state" value="FL">
@@ -136,6 +141,7 @@
           <a href="window-cleaning.html">Window Cleaning</a>
           <a href="exterior-painting.html">Exterior Painting</a>
           <a href="landscaping.html">Landscaping</a>
+          <a href="junk-removal.html">Junk Removal</a>
           <a href="maintenance-plans.html">Care Plans</a>
         </div>
       </div>
