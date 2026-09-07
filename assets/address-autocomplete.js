@@ -6,9 +6,47 @@
   if (!street || !city || !zip || !form) return;
 
   const SOUTH_FLORIDA_CENTER = { lat: 26.1224, lon: -80.1373 };
-  const MIN_CHARS = 3;
-  const DEBOUNCE_MS = 280;
+  const SOUTH_FLORIDA_BBOX = { minLon: -80.95, minLat: 25.10, maxLon: -79.95, maxLat: 27.10 };
+  const MIN_CHARS = 4;
+  const DEBOUNCE_MS = 260;
   const MAX_RESULTS = 6;
+
+  // Chrome/Google autofill can cover a custom address-search list even when
+  // autocomplete="off" is present. Make the visible lookup field deliberately
+  // non-semantic and submit the actual street value through a hidden field.
+  const originalLabel = document.querySelector('label[for="street"]');
+  street.id = 'property_address_lookup';
+  street.name = 'property_address_lookup';
+  street.autocomplete = 'new-password';
+  street.setAttribute('data-form-type', 'other');
+  street.setAttribute('data-lpignore', 'true');
+  street.setAttribute('data-1p-ignore', 'true');
+  street.setAttribute('spellcheck', 'false');
+  street.setAttribute('autocapitalize', 'words');
+  street.setAttribute('aria-autocomplete', 'list');
+  if (originalLabel) originalLabel.setAttribute('for', street.id);
+
+  form.setAttribute('autocomplete', 'off');
+  city.setAttribute('autocomplete', 'off');
+  zip.setAttribute('autocomplete', 'off');
+
+  const addHidden = (name) => {
+    let input = form.querySelector(`input[name="${name}"]`);
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.autocomplete = 'off';
+      form.appendChild(input);
+    }
+    return input;
+  };
+
+  const streetSubmission = addHidden('street');
+  const latInput = addHidden('address_latitude');
+  const lngInput = addHidden('address_longitude');
+  const sourceInput = addHidden('address_source');
+  streetSubmission.value = street.value || '';
 
   const wrapper = document.createElement('div');
   wrapper.className = 'address-autocomplete-wrap';
@@ -19,7 +57,7 @@
   list.id = 'address-suggestions';
   list.className = 'address-suggestions';
   list.setAttribute('role', 'listbox');
-  list.setAttribute('aria-label', 'Suggested addresses');
+  list.setAttribute('aria-label', 'Suggested South Florida addresses');
   list.hidden = true;
   wrapper.appendChild(list);
 
@@ -31,33 +69,16 @@
 
   const helper = document.createElement('small');
   helper.className = 'address-helper';
-  helper.textContent = 'Start typing and choose a suggested address, or enter it manually.';
+  helper.textContent = 'Start typing a Broward, Miami-Dade, or Palm Beach address and choose a match.';
   wrapper.appendChild(helper);
 
-  const addHidden = (name) => {
-    let input = form.querySelector(`input[name="${name}"]`);
-    if (!input) {
-      input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      form.appendChild(input);
-    }
-    return input;
-  };
-
-  const latInput = addHidden('address_latitude');
-  const lngInput = addHidden('address_longitude');
-  const sourceInput = addHidden('address_source');
-
-  street.setAttribute('aria-autocomplete', 'list');
   street.setAttribute('aria-controls', list.id);
   street.setAttribute('aria-expanded', 'false');
-  street.setAttribute('autocomplete', 'off');
 
   const style = document.createElement('style');
   style.textContent = `
     .address-autocomplete-wrap{position:relative;display:grid;gap:7px}
-    .address-suggestions{position:absolute;z-index:80;top:calc(52px + 6px);left:0;right:0;background:#fff;border:1px solid rgba(5,8,6,.2);box-shadow:0 18px 38px rgba(5,8,6,.18);max-height:330px;overflow:auto}
+    .address-suggestions{position:absolute;z-index:9999;top:calc(52px + 6px);left:0;right:0;background:#fff;border:1px solid rgba(5,8,6,.2);box-shadow:0 18px 38px rgba(5,8,6,.22);max-height:330px;overflow:auto}
     .address-suggestions[hidden]{display:none}
     .address-suggestion{display:block;width:100%;border:0;border-bottom:1px solid rgba(5,8,6,.08);background:#fff;color:#111;text-align:left;padding:12px 14px;cursor:pointer;font:inherit}
     .address-suggestion:last-of-type{border-bottom:0}
@@ -78,6 +99,7 @@
   let activeIndex = -1;
 
   const clean = (value) => String(value || '').trim();
+  const normalize = (value) => clean(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   const uniqueParts = (parts) => [...new Set(parts.map(clean).filter(Boolean))];
 
   function streetLine(props) {
@@ -92,7 +114,8 @@
   }
 
   function stateLabel(props) {
-    return clean(props.statecode || props.state);
+    const code = clean(props.statecode).replace(/^US-/, '');
+    return code || clean(props.state);
   }
 
   function resultLabel(feature) {
@@ -100,6 +123,20 @@
     const line1 = streetLine(props);
     const locality = uniqueParts([cityName(props), stateLabel(props), props.postcode]).join(', ');
     return { line1, locality, full: uniqueParts([line1, locality]).join(', ') };
+  }
+
+  function coordinatesInServiceArea(feature) {
+    const coords = feature.geometry?.coordinates || [];
+    const lon = Number(coords[0]);
+    const lat = Number(coords[1]);
+    return Number.isFinite(lon) && Number.isFinite(lat) &&
+      lon >= SOUTH_FLORIDA_BBOX.minLon && lon <= SOUTH_FLORIDA_BBOX.maxLon &&
+      lat >= SOUTH_FLORIDA_BBOX.minLat && lat <= SOUTH_FLORIDA_BBOX.maxLat;
+  }
+
+  function isFlorida(props) {
+    const state = `${props.state || ''} ${props.statecode || ''}`.toLowerCase();
+    return state.includes('florida') || state.includes('us-fl') || /(^|\s)fl($|\s)/.test(state);
   }
 
   function closeList() {
@@ -124,7 +161,10 @@
   function selectResult(feature) {
     const props = feature.properties || {};
     const line = streetLine(props);
-    if (line) street.value = line;
+    if (line) {
+      street.value = line;
+      streetSubmission.value = line;
+    }
     const nextCity = cityName(props);
     const nextZip = clean(props.postcode);
     if (nextCity) city.value = nextCity;
@@ -144,7 +184,7 @@
     list.innerHTML = '';
     if (!results.length) {
       closeList();
-      live.textContent = 'No address suggestions found. You can enter the address manually.';
+      live.textContent = 'No matching South Florida address found. You can still enter the address manually.';
       return;
     }
 
@@ -155,7 +195,7 @@
       button.className = 'address-suggestion';
       button.id = `address-suggestion-${index}`;
       button.setAttribute('role', 'option');
-      button.innerHTML = `<strong></strong><span></span>`;
+      button.innerHTML = '<strong></strong><span></span>';
       button.querySelector('strong').textContent = label.line1 || label.full;
       button.querySelector('span').textContent = label.locality;
       button.addEventListener('pointerdown', event => event.preventDefault());
@@ -170,18 +210,30 @@
     list.appendChild(attribution);
     list.hidden = false;
     street.setAttribute('aria-expanded', 'true');
-    live.textContent = `${results.length} address suggestions available.`;
+    live.textContent = `${results.length} South Florida address suggestions available.`;
   }
 
-  function relevanceScore(feature) {
+  function relevanceScore(feature, query) {
     const p = feature.properties || {};
-    const state = `${p.state || ''} ${p.statecode || ''}`.toLowerCase();
-    const cityText = `${p.city || ''} ${p.district || ''} ${p.county || ''}`.toLowerCase();
+    const label = resultLabel(feature);
+    const normalizedQuery = normalize(query);
+    const normalizedStreet = normalize(label.line1);
+    const normalizedFull = normalize(label.full);
     let score = 0;
-    if (state.includes('florida') || /(^|\s)fl($|\s)/.test(state)) score += 100;
-    if (/broward|miami|palm beach|fort lauderdale|pompano|coral springs|margate|hollywood|boca raton|delray|west palm/.test(cityText)) score += 50;
-    if (p.housenumber) score += 20;
-    if (p.street) score += 10;
+
+    if (isFlorida(p)) score += 200;
+    if (coordinatesInServiceArea(feature)) score += 150;
+    if (p.housenumber) score += 60;
+    if (p.street) score += 30;
+    if (normalizedStreet.startsWith(normalizedQuery)) score += 180;
+    if (normalizedFull.startsWith(normalizedQuery)) score += 120;
+
+    const queryTokens = normalizedQuery.split(' ').filter(Boolean);
+    const streetTokens = new Set(normalizedStreet.split(' ').filter(Boolean));
+    score += queryTokens.reduce((sum, token) => sum + (streetTokens.has(token) ? 18 : 0), 0);
+
+    const cityText = `${p.city || ''} ${p.district || ''} ${p.county || ''}`.toLowerCase();
+    if (/broward|miami-dade|miami dade|palm beach/.test(cityText)) score += 80;
     return score;
   }
 
@@ -190,12 +242,15 @@
     controller = new AbortController();
     wrapper.classList.add('is-loading');
     try {
+      const cityHint = clean(city.value);
+      const searchText = cityHint ? `${query}, ${cityHint}, Florida` : `${query}, Florida`;
       const params = new URLSearchParams({
-        q: query,
-        limit: '12',
+        q: searchText,
+        limit: '20',
         lang: 'en',
         lat: String(SOUTH_FLORIDA_CENTER.lat),
         lon: String(SOUTH_FLORIDA_CENTER.lon),
+        bbox: `${SOUTH_FLORIDA_BBOX.minLon},${SOUTH_FLORIDA_BBOX.minLat},${SOUTH_FLORIDA_BBOX.maxLon},${SOUTH_FLORIDA_BBOX.maxLat}`,
       });
       const response = await fetch(`https://photon.komoot.io/api/?${params.toString()}`, {
         signal: controller.signal,
@@ -208,9 +263,9 @@
         .filter(feature => {
           const p = feature.properties || {};
           const country = String(p.countrycode || '').toUpperCase();
-          return (!country || country === 'US') && Boolean(streetLine(p));
+          return (!country || country === 'US') && isFlorida(p) && coordinatesInServiceArea(feature) && Boolean(streetLine(p));
         })
-        .sort((a, b) => relevanceScore(b) - relevanceScore(a))
+        .sort((a, b) => relevanceScore(b, query) - relevanceScore(a, query))
         .slice(0, MAX_RESULTS);
       render(filtered);
     } catch (error) {
@@ -224,6 +279,7 @@
   }
 
   street.addEventListener('input', () => {
+    streetSubmission.value = street.value;
     latInput.value = '';
     lngInput.value = '';
     sourceInput.value = '';
@@ -258,6 +314,10 @@
       list.hidden = false;
       street.setAttribute('aria-expanded', 'true');
     }
+  });
+
+  form.addEventListener('submit', () => {
+    streetSubmission.value = street.value;
   });
 
   document.addEventListener('pointerdown', event => {
