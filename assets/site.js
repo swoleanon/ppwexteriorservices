@@ -349,16 +349,27 @@ function initAddressSuggest(){
   const zip = document.getElementById('zip');
   if (!input || !list) return;
 
-  const PHOTON = 'https://photon.komoot.io/api/';
   const BIAS = { lat: 26.1223, lon: -80.1373 };
   let timer = 0;
   let controller = null;
   let items = [];
   let active = -1;
 
+  if (list.parentElement !== document.body) {
+    document.body.appendChild(list);
+  }
+
+  const placeList = () => {
+    const box = input.getBoundingClientRect();
+    list.style.top = `${Math.round(box.bottom + window.scrollY + 4)}px`;
+    list.style.left = `${Math.round(box.left + window.scrollX)}px`;
+    list.style.width = `${Math.round(box.width)}px`;
+  };
+
   const close = () => {
     list.hidden = true;
     list.innerHTML = '';
+    list.classList.remove('is-open');
     items = [];
     active = -1;
     input.setAttribute('aria-expanded', 'false');
@@ -382,6 +393,52 @@ function initAddressSuggest(){
     if (city && item.city) city.value = item.city;
     if (zip && item.zip) zip.value = item.zip;
     close();
+  };
+
+  const toItem = ({ street, cityName, state, zipcode, county }) => {
+    const line = (street || '').trim();
+    if (!line) return null;
+    const region = state === 'Florida' || state === 'FL' ? 'FL' : (state || '');
+    const detail = [cityName, region, zipcode].filter(Boolean).join(', ');
+    const score =
+      (region === 'FL' ? 10 : 0) +
+      (/broward|miami-dade|palm beach/i.test(county || '') ? 6 : 0) +
+      (/\d/.test(line) ? 3 : 0) +
+      (zipcode ? 1 : 0);
+    return { street: line, city: cityName || '', zip: zipcode || '', detail, key: (line + '|' + zipcode).toLowerCase(), score };
+  };
+
+  const parsePhoton = (feature) => {
+    const p = feature.properties || {};
+    if (p.countrycode && String(p.countrycode).toUpperCase() !== 'US') return null;
+    return toItem({
+      street: [p.housenumber, p.street || p.name].filter(Boolean).join(' '),
+      cityName: p.city || p.town || p.village || p.district || '',
+      state: p.state || '',
+      zipcode: p.postcode || '',
+      county: p.county || '',
+    });
+  };
+
+  const parseNominatim = (hit) => {
+    const a = hit.address || {};
+    if (a.country_code && String(a.country_code).toUpperCase() !== 'US') return null;
+    const road = a.road || a.pedestrian || a.residential || a.hamlet || '';
+    return toItem({
+      street: [a.house_number, road || hit.name].filter(Boolean).join(' '),
+      cityName: a.city || a.town || a.village || a.municipality || '',
+      state: a.state || '',
+      zipcode: (a.postcode || '').split(';')[0],
+      county: a.county || '',
+    });
+  };
+
+  const uniqueTop = (rows) => {
+    const seen = new Set();
+    return rows
+      .filter((item) => item && !seen.has(item.key) && seen.add(item.key))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6);
   };
 
   const render = (next) => {
@@ -409,41 +466,41 @@ function initAddressSuggest(){
       list.appendChild(li);
     });
     list.hidden = false;
+    list.classList.add('is-open');
+    placeList();
     input.setAttribute('aria-expanded', 'true');
     input.setAttribute('aria-activedescendant', 'address-option-0');
   };
 
-  const parseFeature = (feature) => {
-    const p = feature.properties || {};
-    if (p.countrycode && p.countrycode !== 'US') return null;
-    const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ').trim();
-    if (!street) return null;
-    const cityName = p.city || p.district || '';
-    const state = p.state === 'Florida' ? 'FL' : (p.state || '');
-    const zipcode = p.postcode || '';
-    const detail = [cityName, state, zipcode].filter(Boolean).join(', ');
-    const score =
-      (p.state === 'Florida' || p.state === 'FL' ? 10 : 0) +
-      (/broward|miami-dade|palm beach/i.test(p.county || '') ? 6 : 0) +
-      (p.housenumber ? 3 : 0) +
-      (zipcode ? 1 : 0);
-    return { street, city: cityName, zip: zipcode, detail, key: (street + '|' + zipcode).toLowerCase(), score };
+  const fetchJson = async (url) => {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) throw new Error('geocode ' + response.status);
+    return response.json();
+  };
+
+  const searchPhoton = async (query) => {
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${BIAS.lat}&lon=${BIAS.lon}&limit=8&lang=en`;
+    const data = await fetchJson(url);
+    return uniqueTop((data.features || []).map(parsePhoton));
+  };
+
+  const searchNominatim = async (query) => {
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=us&q=${encodeURIComponent(query + ' Florida')}`;
+    const data = await fetchJson(url);
+    return uniqueTop((Array.isArray(data) ? data : []).map(parseNominatim));
   };
 
   const search = async (query) => {
     if (controller) controller.abort();
     controller = new AbortController();
-    const url = `${PHOTON}?q=${encodeURIComponent(query)}&lat=${BIAS.lat}&lon=${BIAS.lon}&limit=8&lang=en`;
     try {
-      const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
-      if (!response.ok) return;
-      const data = await response.json();
-      const seen = new Set();
-      const next = (data.features || [])
-        .map(parseFeature)
-        .filter((item) => item && !seen.has(item.key) && seen.add(item.key))
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 6);
+      let next = [];
+      try {
+        next = await searchPhoton(query);
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+      }
+      if (!next.length) next = await searchNominatim(query);
       if (input.value.trim() === query) render(next);
     } catch (error) {
       if (error.name !== 'AbortError') close();
@@ -477,8 +534,15 @@ function initAddressSuggest(){
   });
 
   input.addEventListener('blur', () => {
-    window.setTimeout(close, 120);
+    window.setTimeout(close, 160);
   });
+
+  window.addEventListener('resize', () => {
+    if (!list.hidden) placeList();
+  });
+  window.addEventListener('scroll', () => {
+    if (!list.hidden) placeList();
+  }, true);
 }
 
 const quoteForm = document.getElementById('quote-form');
