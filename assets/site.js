@@ -206,22 +206,10 @@ document.querySelectorAll('#navLinks a').forEach((link) => {
 const desktopNav = window.matchMedia('(min-width: 1041px)');
 
 document.querySelectorAll('.nav-parent').forEach((btn) => {
-  btn.addEventListener('mousedown', (event) => {
-    if (desktopNav.matches) event.preventDefault();
-  });
-
   btn.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
     const item = btn.closest('.has-sub');
-
-    if (desktopNav.matches) {
-      item.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-      btn.blur();
-      return;
-    }
-
     const willOpen = !item.classList.contains('open');
     nav?.querySelectorAll('.has-sub.open').forEach((openItem) => {
       if (openItem !== item) {
