@@ -9,6 +9,7 @@ This redesign uses the **information architecture and conversion strategy** of e
 - `pressure-washing.html` — pressure washing landing page
 - `window-cleaning.html` — window cleaning landing page
 - `landscaping.html` — landscaping landing page
+- `junk-removal.html` — residential and commercial junk removal landing page
 - `maintenance-plans.html` — recurring PPW Care Plans
 - `contact.html` — quote-request page
 

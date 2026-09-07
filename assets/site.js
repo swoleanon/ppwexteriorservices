@@ -1,4 +1,174 @@
 
+// Keep every page on the same visual content boundary. Full-bleed backgrounds/media
+// can still span the viewport, but readable content stays on one shared grid.
+const boundaryStyle = document.createElement('style');
+boundaryStyle.dataset.ppwBoundaries = '1';
+boundaryStyle.textContent = `
+  :root { --ppw-content-max: 1280px; --ppw-content-inline: 80px; }
+  html, body { max-width: 100%; overflow-x: hidden; }
+  .container:not(.nav-inner),
+  .about-premium .about-shell {
+    width: min(var(--ppw-content-max), calc(100% - var(--ppw-content-inline))) !important;
+    margin-inline: auto !important;
+  }
+  main, section, footer,
+  .container, .about-shell,
+  .page-hero-copy, .premium-head, .premium-head > *,
+  .commercial-intro-grid > *, .commercial-case > *,
+  .residential-result-grid > *, .residential-reviews > *,
+  .quote-page-grid > *, .about-hero-grid > *, .about-story-grid > * {
+    min-width: 0;
+  }
+  img, video, iframe { max-width: 100%; }
+  [href^="mailto:"], [href^="tel:"], .footer-links, .cta-contact, .quote-contact-card strong {
+    overflow-wrap: anywhere;
+  }
+  table { max-width: 100%; }
+
+  @media (max-width: 1040px) {
+    .nav-inner {
+      width: calc(100% - 24px) !important;
+      margin-inline: auto !important;
+    }
+    .nav-links.open {
+      width: 100%;
+      max-width: 100%;
+      max-height: calc(100dvh - 92px) !important;
+      overscroll-behavior: contain;
+    }
+    .nav-links.open > a,
+    .nav-links.open .nav-parent,
+    .nav-links.open .nav-sub a {
+      min-height: 44px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    :root { --ppw-content-inline: 48px; }
+    .footer-bottom { flex-wrap: wrap; }
+  }
+
+  @media (max-width: 760px) {
+    .site-nav .call-btn { display: none !important; }
+    .site-nav .brand img {
+      max-width: min(172px, 50vw) !important;
+      height: auto !important;
+      max-height: 52px;
+    }
+    .site-nav .menu,
+    .site-nav .quote-btn,
+    .btn,
+    button,
+    .portfolio-filters button,
+    summary,
+    .social-link {
+      min-height: 44px;
+    }
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+    .premium-case-meta,
+    .commercial-project-meta,
+    .premium-services-footer,
+    .footer-bottom {
+      flex-wrap: wrap;
+    }
+    .about-premium .about-portrait-wrap {
+      order: -1 !important;
+      min-height: 330px !important;
+      margin-top: 0 !important;
+    }
+    .about-premium .about-portrait {
+      max-height: 390px !important;
+    }
+    .about-premium .about-hero-grid {
+      padding-top: 22px !important;
+    }
+    .about-premium .about-hero-copy {
+      padding-top: 8px !important;
+    }
+    .ba-handle span {
+      width: 48px;
+      height: 48px;
+    }
+    .promo-close {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    :root { --ppw-content-inline: 32px; }
+    .site-nav .quote-btn { display: none !important; }
+    .nav-inner {
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      gap: 8px !important;
+    }
+    .site-nav .brand img {
+      max-width: min(168px, 58vw) !important;
+    }
+    .hero-actions,
+    .premium-hero-actions,
+    .about-hero-actions {
+      width: 100%;
+    }
+    .hero-actions .btn,
+    .premium-hero-actions .btn,
+    .about-hero-actions .btn {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+    .premium-case-meta,
+    .commercial-project-meta,
+    .premium-services-footer,
+    .residential-hero-meta,
+    .footer-bottom {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+    }
+    .footer-grid { grid-template-columns: 1fr !important; }
+    .footer-bottom { gap: 8px; }
+    .section,
+    .premium-section,
+    .about-premium .about-section {
+      padding-top: 68px !important;
+      padding-bottom: 68px !important;
+    }
+    .commercial-value-row {
+      grid-template-columns: 36px minmax(0, 1fr) !important;
+      gap: 12px !important;
+    }
+    .quote-contact-card,
+    .premium-quote-form-head,
+    .premium-quote-form form,
+    .commercial-case-copy,
+    .commercial-feature-copy,
+    .premium-service-copy,
+    .about-premium .about-principle,
+    .about-premium .about-review {
+      max-width: 100%;
+    }
+    .portfolio-filters {
+      gap: 10px;
+    }
+    .portfolio-filters button {
+      flex: 1 1 calc(50% - 10px);
+    }
+    details > summary {
+      padding-block: 10px;
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 380px) {
+    :root { --ppw-content-inline: 28px; }
+    .site-nav .brand img { max-width: 150px !important; }
+    .portfolio-filters button { flex-basis: 100%; }
+  }
+`;
+document.head.appendChild(boundaryStyle);
+
 const siteNav = document.querySelector('.site-nav');
 const setNavScroll = () => {
   siteNav?.classList.toggle('is-scrolled', window.scrollY > 20);
@@ -9,6 +179,9 @@ window.addEventListener('scroll', setNavScroll, { passive: true });
 const menu = document.getElementById('menuBtn');
 const nav = document.getElementById('navLinks');
 if (menu && nav) {
+  menu.setAttribute('aria-expanded', 'false');
+  menu.setAttribute('aria-controls', 'navLinks');
+
   menu.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
     menu.setAttribute('aria-expanded', String(open));
@@ -25,15 +198,30 @@ if (menu && nav) {
 document.querySelectorAll('#navLinks a').forEach((link) => {
   link.addEventListener('click', () => {
     nav?.classList.remove('open');
+    menu?.setAttribute('aria-expanded', 'false');
     document.body.classList.remove('nav-open');
   });
 });
 
+const desktopNav = window.matchMedia('(min-width: 1041px)');
+
 document.querySelectorAll('.nav-parent').forEach((btn) => {
+  btn.addEventListener('mousedown', (event) => {
+    if (desktopNav.matches) event.preventDefault();
+  });
+
   btn.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
     const item = btn.closest('.has-sub');
+
+    if (desktopNav.matches) {
+      item.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.blur();
+      return;
+    }
+
     const willOpen = !item.classList.contains('open');
     nav?.querySelectorAll('.has-sub.open').forEach((openItem) => {
       if (openItem !== item) {
@@ -46,7 +234,24 @@ document.querySelectorAll('.nav-parent').forEach((btn) => {
   });
 });
 
+desktopNav.addEventListener('change', (event) => {
+  if (!event.matches) return;
+  document.querySelectorAll('.has-sub.open').forEach((item) => {
+    item.classList.remove('open');
+    item.querySelector('.nav-parent')?.setAttribute('aria-expanded', 'false');
+  });
+});
+
 document.addEventListener('click', (event) => {
+  if (
+    nav?.classList.contains('open') &&
+    !event.target.closest('#navLinks') &&
+    !event.target.closest('#menuBtn')
+  ) {
+    nav.classList.remove('open');
+    menu?.setAttribute('aria-expanded', 'false');
+  }
+
   if (event.target.closest('.has-sub') || event.target.closest('#menuBtn')) return;
   document.querySelectorAll('.has-sub.open').forEach((item) => {
     item.classList.remove('open');
@@ -55,6 +260,13 @@ document.addEventListener('click', (event) => {
 });
 
 const year=document.getElementById('year'); if(year) year.textContent=new Date().getFullYear();
+
+// Keep the site-wide conversion language consistent with the premium brand system.
+document.querySelectorAll('.quote-btn, footer .btn-lime').forEach((button) => {
+  if (/^Get a Free Quote$/i.test(button.textContent.trim())) {
+    button.textContent = 'Request a Quote';
+  }
+});
 
 function initBeforeAfter(){
   document.querySelectorAll('.ba-slider').forEach((slider) => {
@@ -344,7 +556,7 @@ if (quoteForm) {
 (function loadPromoPopup() {
   if (document.querySelector('script[data-ppw-promo]')) return;
   const script = document.createElement('script');
-  script.src = 'assets/promo-popup.js';
+  script.src = new URL('promo-popup.js', document.currentScript?.src || window.location.href).href;
   script.defer = true;
   script.dataset.ppwPromo = '1';
   document.body.appendChild(script);

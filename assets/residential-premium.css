@@ -1,0 +1,81 @@
+/* PPW premium residential page */
+body.residential-premium { background: var(--ppw-black); }
+
+.residential-hero {
+  position: relative;
+  min-height: 86vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--ppw-black);
+}
+.residential-hero-media { position:absolute; inset:0; margin:0; }
+.residential-hero-media img { width:100%; height:100%; object-fit:cover; object-position:center 55%; filter:saturate(.8) contrast(1.05) brightness(.8); }
+.residential-hero::before { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(90deg,rgba(3,6,4,.9) 0%,rgba(3,6,4,.66) 40%,rgba(3,6,4,.18) 72%),linear-gradient(180deg,rgba(3,6,4,.08),rgba(3,6,4,.12) 48%,rgba(3,6,4,.94)); }
+.residential-hero-inner { position:relative; z-index:2; width:100%; padding:168px 0 68px; }
+.residential-hero h1 { max-width:10ch; margin:0; font-size:clamp(4rem,7.5vw,7.8rem); line-height:.89; letter-spacing:-.055em; color:#fff; }
+.residential-hero-lead { max-width:630px; margin:28px 0 0; color:#d0d8d2; font-size:clamp(1.04rem,1.4vw,1.2rem); line-height:1.62; }
+.residential-hero-meta { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-top:64px; padding-top:20px; border-top:1px solid rgba(255,255,255,.18); }
+.residential-hero-meta span { color:#c4cdc6; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; }
+.residential-hero-meta strong { color:#fff; font-family:var(--font-display); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; }
+
+.residential-mosaic { display:grid; grid-template-columns:1.25fr .75fr; grid-template-rows:repeat(2,310px); gap:14px; }
+.residential-mosaic figure { position:relative; margin:0; overflow:hidden; background:#101712; }
+.residential-mosaic figure:first-child { grid-row:1 / -1; }
+.residential-mosaic img { width:100%; height:100%; object-fit:cover; filter:saturate(.82); transition:transform .55s ease; }
+.residential-mosaic figure:hover img { transform:scale(1.03); }
+.residential-mosaic figcaption { position:absolute; left:20px; bottom:18px; padding:7px 10px; background:rgba(4,8,5,.76); color:#fff; font-family:var(--font-display); font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+
+.residential-result-grid { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr); gap:50px; align-items:center; }
+.residential-result-grid .ba-slider { aspect-ratio:16/10; border-radius:3px; box-shadow:none; }
+.residential-result-copy h2 { max-width:9ch; margin:0; font-size:clamp(3rem,5vw,5.5rem); line-height:.94; letter-spacing:-.055em; color:var(--ppw-black); }
+.residential-result-copy p { margin:20px 0 0; color:#616b63; line-height:1.65; }
+.residential-result-copy .premium-text-link { display:inline-block; margin-top:28px; }
+
+.residential-cadence { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--ppw-line); border-bottom:1px solid var(--ppw-line); }
+.residential-cadence article { min-height:230px; padding:28px 24px; border-right:1px solid var(--ppw-line); }
+.residential-cadence article:last-child { border-right:0; }
+.residential-cadence small { display:block; margin-bottom:32px; color:var(--ppw-lime); font-size:.67rem; letter-spacing:.12em; text-transform:uppercase; }
+.residential-cadence h3 { margin:0 0 10px; font-size:1.5rem; color:#fff; }
+.residential-cadence p { margin:0; color:#9ba79e; font-size:.88rem; line-height:1.52; }
+
+.residential-reviews { display:grid; grid-template-columns:.72fr 1.28fr; gap:72px; align-items:start; }
+.residential-reviews h2 { max-width:9ch; margin:0; font-size:clamp(3rem,5vw,5.4rem); line-height:.94; letter-spacing:-.055em; }
+.residential-review-list { border-top:1px solid var(--ppw-line); }
+.residential-review { padding:28px 0; border-bottom:1px solid var(--ppw-line); }
+.residential-review-stars { margin-bottom:12px; color:var(--ppw-lime); letter-spacing:2px; font-size:.78rem; }
+.residential-review blockquote { margin:0; color:#e1e7e2; font-size:1.05rem; line-height:1.62; }
+.residential-review cite { display:block; margin-top:14px; color:#849087; font-style:normal; font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; }
+
+.residential-final { position:relative; min-height:620px; display:flex; align-items:center; overflow:hidden; isolation:isolate; }
+.residential-final > img { position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; filter:saturate(.7) brightness(.62); }
+.residential-final::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,rgba(3,6,4,.94) 0%,rgba(3,6,4,.75) 48%,rgba(3,6,4,.28)); }
+.residential-final-inner { padding:90px 0; }
+.residential-final h2 { max-width:10ch; margin:0; font-size:clamp(3.5rem,6vw,6.2rem); line-height:.92; letter-spacing:-.055em; }
+.residential-final p { max-width:560px; margin:22px 0 0; color:#c4ccc6; line-height:1.62; }
+
+body.residential-premium .seo-more { margin-top:52px; padding-top:18px; border-top:1px solid var(--ppw-line); color:#8e9a91; }
+body.residential-premium .seo-more summary { color:#c8d0ca; cursor:pointer; font-family:var(--font-display); font-weight:700; }
+body.residential-premium .seo-more p { max-width:78ch; color:#8e9a91; font-size:.88rem; line-height:1.65; }
+body.residential-premium .seo-more a { color:var(--ppw-lime); }
+
+@media (max-width:1040px){
+  .residential-mosaic{grid-template-columns:1fr 1fr; grid-template-rows:360px 270px;}
+  .residential-mosaic figure:first-child{grid-column:1/-1; grid-row:auto;}
+  .residential-result-grid,.residential-reviews{grid-template-columns:1fr; gap:36px;}
+  .residential-cadence{grid-template-columns:repeat(2,1fr);}
+  .residential-cadence article:nth-child(2){border-right:0;}
+  .residential-cadence article:nth-child(-n+2){border-bottom:1px solid var(--ppw-line);}
+}
+@media (max-width:680px){
+  .residential-hero{min-height:760px;}
+  .residential-hero-inner{padding:130px 0 44px;}
+  .residential-hero h1{font-size:clamp(3.4rem,15vw,5rem);}
+  .residential-hero-meta{flex-direction:column;align-items:flex-start;margin-top:42px;}
+  .residential-mosaic{grid-template-columns:1fr;grid-template-rows:none;}
+  .residential-mosaic figure,.residential-mosaic figure:first-child{grid-column:auto;grid-row:auto;height:280px;}
+  .residential-cadence{grid-template-columns:1fr;}
+  .residential-cadence article,.residential-cadence article:nth-child(2){border-right:0;border-bottom:1px solid var(--ppw-line);}
+  .residential-cadence article:last-child{border-bottom:0;}
+  .residential-final{min-height:580px;}
+}
