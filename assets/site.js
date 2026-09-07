@@ -359,7 +359,7 @@ if (quoteForm) {
     event.preventDefault();
     const button = quoteForm.querySelector('button[type="submit"]');
     const status = document.getElementById('form-status');
-    const street = document.getElementById('street');
+    const street = document.getElementById('property_address_lookup') || document.getElementById('street');
     const zip = document.getElementById('zip');
     if (status) status.textContent = '';
 
