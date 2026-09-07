@@ -1,8 +1,9 @@
 export async function onRequest({ request, env, next }) {
   const response = await next();
   const url = new URL(request.url);
+  const pathname = url.pathname.replace(/\/+$/, '') || '/';
 
-  if (!url.pathname.endsWith('/contact.html') && url.pathname !== '/contact') {
+  if (pathname !== '/contact' && pathname !== '/contact.html') {
     return response;
   }
 
