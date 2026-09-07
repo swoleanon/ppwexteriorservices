@@ -155,7 +155,6 @@
         region: 'US',
         language: 'en',
         callback: callbackName,
-        auth_referrer_policy: 'origin',
       });
       script.src = `https://maps.googleapis.com/maps/api/js?${params.toString()}`;
       script.async = true;
