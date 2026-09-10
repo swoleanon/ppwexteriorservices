@@ -1,150 +1,136 @@
 (() => {
-  const street = document.getElementById('street');
+  const lookup = document.getElementById('ppw-property-address-search') || document.getElementById('street');
   const city = document.getElementById('city');
   const zip = document.getElementById('zip');
   const form = document.getElementById('quote-form');
-  if (!street || !city || !zip || !form) return;
+  if (!lookup || !city || !zip || !form) return;
 
   const SOUTH_FLORIDA_CENTER = { lat: 26.1224, lng: -80.1373 };
   const SOUTH_FLORIDA_BOUNDS = { west: -80.95, south: 25.10, east: -79.95, north: 27.10 };
-  const MIN_CHARS = 4;
-  const DEBOUNCE_MS = 240;
+  const MIN_CHARS = 3;
+  const DEBOUNCE_MS = 220;
   const MAX_RESULTS = 6;
 
-  // Keep the visible lookup field non-semantic so browser autofill does not cover
-  // the Google suggestions. The submitted street value stays in a hidden field.
-  const originalLabel = document.querySelector('label[for="street"]');
-  street.id = 'property_address_lookup';
-  street.name = 'property_address_lookup';
-  street.autocomplete = 'new-password';
-  street.setAttribute('data-form-type', 'other');
-  street.setAttribute('data-lpignore', 'true');
-  street.setAttribute('data-1p-ignore', 'true');
-  street.setAttribute('spellcheck', 'false');
-  street.setAttribute('autocapitalize', 'words');
-  street.setAttribute('aria-autocomplete', 'list');
-  if (originalLabel) originalLabel.setAttribute('for', street.id);
-
+  // The Cloudflare Worker rewrites this field before the HTML reaches the browser.
+  // Keep the same protection here as a fallback for direct/static previews.
+  const oldLabel = document.querySelector('label[for="street"]');
+  if (lookup.id === 'street') {
+    lookup.id = 'ppw-property-address-search';
+    lookup.name = 'property_address_lookup';
+    lookup.type = 'search';
+    if (oldLabel) oldLabel.setAttribute('for', lookup.id);
+  }
+  lookup.setAttribute('autocomplete', 'off');
+  lookup.setAttribute('data-form-type', 'other');
+  lookup.setAttribute('data-lpignore', 'true');
+  lookup.setAttribute('data-1p-ignore', 'true');
+  lookup.setAttribute('spellcheck', 'false');
+  lookup.setAttribute('autocapitalize', 'words');
+  lookup.setAttribute('aria-autocomplete', 'list');
   form.setAttribute('autocomplete', 'off');
-  city.setAttribute('autocomplete', 'off');
-  zip.setAttribute('autocomplete', 'off');
 
-  const addHidden = (name) => {
+  const addHidden = (name, initialValue = '') => {
     let input = form.querySelector(`input[name="${name}"]`);
+    if (input === lookup) input = null;
     if (!input) {
       input = document.createElement('input');
       input.type = 'hidden';
       input.name = name;
-      input.autocomplete = 'off';
+      input.value = initialValue;
       form.appendChild(input);
     }
     return input;
   };
 
-  const streetSubmission = addHidden('street');
+  const streetSubmission = addHidden('street', lookup.value || '');
+  const stateInput = form.querySelector('input[name="state"]') || addHidden('state', 'FL');
   const latInput = addHidden('address_latitude');
   const lngInput = addHidden('address_longitude');
   const sourceInput = addHidden('address_source');
   const placeIdInput = addHidden('google_place_id');
-  streetSubmission.value = street.value || '';
 
   const wrapper = document.createElement('div');
   wrapper.className = 'address-autocomplete-wrap';
-  street.parentNode.insertBefore(wrapper, street);
-  wrapper.appendChild(street);
+  lookup.parentNode.insertBefore(wrapper, lookup);
+  wrapper.appendChild(lookup);
 
   const list = document.createElement('div');
   list.id = 'address-suggestions';
   list.className = 'address-suggestions';
   list.setAttribute('role', 'listbox');
-  list.setAttribute('aria-label', 'Suggested South Florida addresses');
+  list.setAttribute('aria-label', 'Google address suggestions');
   list.hidden = true;
   wrapper.appendChild(list);
 
-  const live = document.createElement('div');
+  const helper = document.createElement('small');
+  helper.className = 'address-helper';
+  helper.textContent = 'Start typing the property address, then choose the matching Google result.';
+  wrapper.appendChild(helper);
+
+  const live = document.createElement('span');
   live.className = 'sr-only';
   live.setAttribute('aria-live', 'polite');
   live.setAttribute('aria-atomic', 'true');
   wrapper.appendChild(live);
 
-  const helper = document.createElement('small');
-  helper.className = 'address-helper';
-  helper.textContent = 'Start typing a Broward, Miami-Dade, or Palm Beach address and choose a match.';
-  wrapper.appendChild(helper);
-
-  street.setAttribute('aria-controls', list.id);
-  street.setAttribute('aria-expanded', 'false');
+  lookup.setAttribute('aria-controls', list.id);
+  lookup.setAttribute('aria-expanded', 'false');
+  lookup.setAttribute('role', 'combobox');
 
   const style = document.createElement('style');
   style.textContent = `
     .address-autocomplete-wrap{position:relative;display:grid;gap:7px}
-    .address-suggestions{position:absolute;z-index:9999;top:calc(52px + 6px);left:0;right:0;background:#fff;border:1px solid rgba(5,8,6,.2);box-shadow:0 18px 38px rgba(5,8,6,.22);max-height:330px;overflow:auto}
+    .address-suggestions{position:absolute;z-index:99999;top:calc(52px + 6px);left:0;right:0;background:#fff;border:1px solid rgba(5,8,6,.22);box-shadow:0 20px 44px rgba(5,8,6,.22);max-height:350px;overflow:auto}
     .address-suggestions[hidden]{display:none}
     .address-suggestion{display:block;width:100%;border:0;border-bottom:1px solid rgba(5,8,6,.08);background:#fff;color:#111;text-align:left;padding:12px 14px;cursor:pointer;font:inherit}
-    .address-suggestion:last-of-type{border-bottom:0}
     .address-suggestion:hover,.address-suggestion.is-active{background:#f2f8ea}
-    .address-suggestion strong{display:block;color:#111;font-size:.88rem;line-height:1.35;font-weight:700}
-    .address-suggestion span{display:block;margin-top:3px;color:#647068;font-size:.74rem;line-height:1.35}
-    .address-suggestion-attribution{padding:8px 12px;background:#f7f8f5;color:#5e5e5e;font-size:.7rem;font-weight:500;text-align:right;border-top:1px solid rgba(5,8,6,.08);white-space:nowrap}
+    .address-suggestion-main{display:block;color:#111;font-size:.89rem;line-height:1.35;font-weight:700}
+    .address-suggestion-secondary{display:block;margin-top:3px;color:#667068;font-size:.74rem;line-height:1.35}
+    .address-google-attribution{display:flex;justify-content:flex-end;align-items:center;padding:8px 12px;background:#f7f8f5;border-top:1px solid rgba(5,8,6,.08)}
+    .address-google-attribution img{display:block;width:120px;max-width:42%;height:auto}
     .address-helper{display:block;color:#788078;font-size:.69rem;line-height:1.4;font-weight:500}
-    .address-autocomplete-wrap.is-loading::after{content:'Searching…';position:absolute;right:13px;top:17px;color:#7a847c;font-size:.68rem;background:#fff;padding-left:8px}
+    .address-helper.is-error{color:#a1492a}
+    .address-autocomplete-wrap.is-loading::after{content:'Searching…';position:absolute;right:13px;top:17px;color:#7a847c;font-size:.68rem;background:#fff;padding-left:8px;pointer-events:none}
     .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-    @media(max-width:680px){.address-suggestions{max-height:280px}.address-suggestion{padding:13px 12px}}
+    input[type="search"]::-webkit-search-cancel-button{display:none}
+    @media(max-width:680px){.address-suggestions{max-height:300px}.address-suggestion{padding:13px 12px}}
   `;
   document.head.appendChild(style);
 
   let debounceTimer = null;
-  let photonController = null;
-  let searchRequestId = 0;
-  let results = [];
+  let newestRequest = 0;
   let activeIndex = -1;
-  let googleLoadPromise = null;
-  let googlePlaces = null;
-  let googleSessionToken = null;
+  let results = [];
+  let loadPromise = null;
+  let placesLibrary = null;
+  let sessionToken = null;
 
-  const clean = (value) => String(value || '').trim();
-  const normalize = (value) => clean(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-  const uniqueParts = (parts) => [...new Set(parts.map(clean).filter(Boolean))];
-
-  function resetAddressMetadata() {
-    latInput.value = '';
-    lngInput.value = '';
-    sourceInput.value = '';
-    placeIdInput.value = '';
-  }
-
-  function closeList({ resetSession = false } = {}) {
-    list.hidden = true;
-    list.innerHTML = '';
-    street.setAttribute('aria-expanded', 'false');
-    street.removeAttribute('aria-activedescendant');
-    activeIndex = -1;
-    results = [];
-    if (resetSession) googleSessionToken = null;
-  }
-
-  function setActive(index) {
-    const options = [...list.querySelectorAll('.address-suggestion')];
-    if (!options.length) return;
-    activeIndex = Math.max(0, Math.min(index, options.length - 1));
-    options.forEach((option, i) => option.classList.toggle('is-active', i === activeIndex));
-    const active = options[activeIndex];
-    street.setAttribute('aria-activedescendant', active.id);
-    active.scrollIntoView({ block: 'nearest' });
-  }
+  const clean = value => String(value || '').trim();
 
   function mapsApiKey() {
     return clean(document.querySelector('meta[name="ppw-google-maps-key"]')?.content);
   }
 
+  function showError(message) {
+    helper.textContent = message;
+    helper.classList.add('is-error');
+  }
+
+  function clearError() {
+    helper.textContent = 'Start typing the property address, then choose the matching Google result.';
+    helper.classList.remove('is-error');
+  }
+
   function loadGoogleMaps() {
-    if (window.google?.maps?.importLibrary) return Promise.resolve(window.google.maps);
-    if (googleLoadPromise) return googleLoadPromise;
+    if (window.google?.maps?.importLibrary) return Promise.resolve();
+    if (loadPromise) return loadPromise;
 
     const key = mapsApiKey();
-    if (!key) return Promise.reject(new Error('Google Maps key is not configured.'));
+    if (!key) {
+      return Promise.reject(new Error('Google address search is not configured on this page.'));
+    }
 
-    googleLoadPromise = new Promise((resolve, reject) => {
+    loadPromise = new Promise((resolve, reject) => {
       const callbackName = `__ppwGoogleMapsReady_${Date.now()}`;
       const script = document.createElement('script');
       const params = new URLSearchParams({
@@ -152,325 +138,238 @@
         v: 'weekly',
         loading: 'async',
         libraries: 'places',
-        region: 'US',
         language: 'en',
+        region: 'US',
         callback: callbackName,
       });
       script.src = `https://maps.googleapis.com/maps/api/js?${params.toString()}`;
       script.async = true;
       script.defer = true;
       script.referrerPolicy = 'strict-origin-when-cross-origin';
-      script.onerror = () => {
+
+      const fail = () => {
         delete window[callbackName];
-        googleLoadPromise = null;
-        reject(new Error('Google Maps could not be loaded.'));
+        loadPromise = null;
+        reject(new Error('Google address search could not load.'));
       };
+      script.onerror = fail;
       window[callbackName] = () => {
         delete window[callbackName];
-        resolve(window.google.maps);
+        if (window.google?.maps?.importLibrary) resolve();
+        else fail();
       };
       document.head.appendChild(script);
     });
 
-    return googleLoadPromise;
+    return loadPromise;
   }
 
-  async function ensureGooglePlaces() {
-    if (googlePlaces) return googlePlaces;
+  async function ensurePlaces() {
+    if (placesLibrary) return placesLibrary;
     await loadGoogleMaps();
-    const library = await window.google.maps.importLibrary('places');
-    googlePlaces = {
-      AutocompleteSuggestion: library.AutocompleteSuggestion,
-      AutocompleteSessionToken: library.AutocompleteSessionToken,
-    };
-    return googlePlaces;
+    placesLibrary = await window.google.maps.importLibrary('places');
+    return placesLibrary;
   }
 
-  async function googleSuggestions(query) {
-    const { AutocompleteSuggestion, AutocompleteSessionToken } = await ensureGooglePlaces();
-    if (!googleSessionToken) googleSessionToken = new AutocompleteSessionToken();
-
-    const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions({
-      input: query,
-      inputOffset: query.length,
-      sessionToken: googleSessionToken,
-      locationRestriction: SOUTH_FLORIDA_BOUNDS,
-      includedRegionCodes: ['us'],
-      origin: SOUTH_FLORIDA_CENTER,
-      language: 'en-US',
-      region: 'us',
-    });
-
-    return (suggestions || [])
-      .map((suggestion) => suggestion.placePrediction)
-      .filter(Boolean)
-      .slice(0, MAX_RESULTS)
-      .map((prediction) => ({
-        provider: 'google',
-        prediction,
-        line1: clean(prediction.mainText?.toString()) || clean(prediction.text?.toString()),
-        locality: clean(prediction.secondaryText?.toString()),
-        full: clean(prediction.text?.toString()),
-      }));
-  }
-
-  function component(components, type) {
-    return (components || []).find((item) => item.types?.includes(type));
-  }
-
-  async function selectGoogleResult(result) {
-    wrapper.classList.add('is-loading');
-    try {
-      const place = result.prediction.toPlace();
-      await place.fetchFields({ fields: ['addressComponents', 'formattedAddress', 'location', 'id'] });
-      const components = place.addressComponents || [];
-      const number = clean(component(components, 'street_number')?.longText);
-      const route = clean(component(components, 'route')?.longText || component(components, 'route')?.shortText);
-      const nextStreet = uniqueParts([number, route]).join(' ');
-      const nextCity = clean(
-        component(components, 'locality')?.longText ||
-        component(components, 'postal_town')?.longText ||
-        component(components, 'sublocality_level_1')?.longText ||
-        component(components, 'administrative_area_level_2')?.longText
-      );
-      const state = clean(component(components, 'administrative_area_level_1')?.shortText || component(components, 'administrative_area_level_1')?.longText);
-      const postal = clean(component(components, 'postal_code')?.longText);
-      const postalSuffix = clean(component(components, 'postal_code_suffix')?.longText);
-      const nextZip = postalSuffix ? `${postal}-${postalSuffix}` : postal;
-
-      if (nextStreet) {
-        street.value = nextStreet;
-        streetSubmission.value = nextStreet;
-      } else {
-        street.value = result.line1 || result.full;
-        streetSubmission.value = street.value;
-      }
-      if (nextCity) city.value = nextCity;
-      if (nextZip) zip.value = nextZip;
-
-      const location = place.location;
-      latInput.value = location ? String(location.lat()) : '';
-      lngInput.value = location ? String(location.lng()) : '';
-      sourceInput.value = 'Google Maps';
-      placeIdInput.value = clean(place.id);
-
-      [street, city, zip].forEach((input) => input.dispatchEvent(new Event('change', { bubbles: true })));
-      live.textContent = `Selected ${[street.value, city.value, state || 'FL', zip.value].filter(Boolean).join(', ')}. City and ZIP code were filled in.`;
-      closeList({ resetSession: true });
-    } finally {
-      wrapper.classList.remove('is-loading');
-    }
-  }
-
-  // OpenStreetMap fallback keeps address entry usable if Google is temporarily
-  // unavailable or the production key has not been configured yet.
-  function photonStreetLine(props) {
-    const house = clean(props.housenumber);
-    const road = clean(props.street || props.name);
-    if (house && road) return `${house} ${road}`;
-    return road || house;
-  }
-
-  function photonCity(props) {
-    return clean(props.city || props.locality || props.district || props.county);
-  }
-
-  function photonState(props) {
-    const code = clean(props.statecode).replace(/^US-/, '');
-    return code || clean(props.state);
-  }
-
-  function coordinatesInServiceArea(feature) {
-    const coords = feature.geometry?.coordinates || [];
-    const lon = Number(coords[0]);
-    const lat = Number(coords[1]);
-    return Number.isFinite(lon) && Number.isFinite(lat) &&
-      lon >= SOUTH_FLORIDA_BOUNDS.west && lon <= SOUTH_FLORIDA_BOUNDS.east &&
-      lat >= SOUTH_FLORIDA_BOUNDS.south && lat <= SOUTH_FLORIDA_BOUNDS.north;
-  }
-
-  function isFlorida(props) {
-    const state = `${props.state || ''} ${props.statecode || ''}`.toLowerCase();
-    return state.includes('florida') || state.includes('us-fl') || /(^|\s)fl($|\s)/.test(state);
-  }
-
-  function photonLabel(feature) {
-    const props = feature.properties || {};
-    const line1 = photonStreetLine(props);
-    const locality = uniqueParts([photonCity(props), photonState(props), props.postcode]).join(', ');
-    return { line1, locality, full: uniqueParts([line1, locality]).join(', ') };
-  }
-
-  function photonRelevance(feature, query) {
-    const props = feature.properties || {};
-    const label = photonLabel(feature);
-    const normalizedQuery = normalize(query);
-    const normalizedStreet = normalize(label.line1);
-    const normalizedFull = normalize(label.full);
-    let score = 0;
-    if (isFlorida(props)) score += 200;
-    if (coordinatesInServiceArea(feature)) score += 150;
-    if (props.housenumber) score += 60;
-    if (props.street) score += 30;
-    if (normalizedStreet.startsWith(normalizedQuery)) score += 180;
-    if (normalizedFull.startsWith(normalizedQuery)) score += 120;
-    const queryTokens = normalizedQuery.split(' ').filter(Boolean);
-    const streetTokens = new Set(normalizedStreet.split(' ').filter(Boolean));
-    score += queryTokens.reduce((sum, token) => sum + (streetTokens.has(token) ? 18 : 0), 0);
-    const cityText = `${props.city || ''} ${props.district || ''} ${props.county || ''}`.toLowerCase();
-    if (/broward|miami-dade|miami dade|palm beach/.test(cityText)) score += 80;
-    return score;
-  }
-
-  async function photonSuggestions(query) {
-    photonController?.abort();
-    photonController = new AbortController();
-    const cityHint = clean(city.value);
-    const searchText = cityHint ? `${query}, ${cityHint}, Florida` : `${query}, Florida`;
-    const params = new URLSearchParams({
-      q: searchText,
-      limit: '20',
-      lang: 'en',
-      lat: String(SOUTH_FLORIDA_CENTER.lat),
-      lon: String(SOUTH_FLORIDA_CENTER.lng),
-      bbox: `${SOUTH_FLORIDA_BOUNDS.west},${SOUTH_FLORIDA_BOUNDS.south},${SOUTH_FLORIDA_BOUNDS.east},${SOUTH_FLORIDA_BOUNDS.north}`,
-    });
-    const response = await fetch(`https://photon.komoot.io/api/?${params.toString()}`, {
-      signal: photonController.signal,
-      headers: { Accept: 'application/json' },
-    });
-    if (!response.ok) throw new Error(`Address fallback returned ${response.status}`);
-    const payload = await response.json();
-    const features = Array.isArray(payload.features) ? payload.features : [];
-    return features
-      .filter((feature) => {
-        const props = feature.properties || {};
-        const country = String(props.countrycode || '').toUpperCase();
-        return (!country || country === 'US') && isFlorida(props) && coordinatesInServiceArea(feature) && Boolean(photonStreetLine(props));
-      })
-      .sort((a, b) => photonRelevance(b, query) - photonRelevance(a, query))
-      .slice(0, MAX_RESULTS)
-      .map((feature) => {
-        const label = photonLabel(feature);
-        return { provider: 'photon', feature, ...label };
-      });
-  }
-
-  function selectPhotonResult(result) {
-    const feature = result.feature;
-    const props = feature.properties || {};
-    const line = photonStreetLine(props);
-    if (line) {
-      street.value = line;
-      streetSubmission.value = line;
-    }
-    const nextCity = photonCity(props);
-    const nextZip = clean(props.postcode);
-    if (nextCity) city.value = nextCity;
-    if (nextZip) zip.value = nextZip;
-    const coordinates = feature.geometry?.coordinates || [];
-    lngInput.value = Number.isFinite(Number(coordinates[0])) ? String(coordinates[0]) : '';
-    latInput.value = Number.isFinite(Number(coordinates[1])) ? String(coordinates[1]) : '';
-    sourceInput.value = 'Photon / OpenStreetMap';
+  function resetMetadata() {
+    latInput.value = '';
+    lngInput.value = '';
+    sourceInput.value = '';
     placeIdInput.value = '';
-    [street, city, zip].forEach((input) => input.dispatchEvent(new Event('change', { bubbles: true })));
-    live.textContent = `Selected ${result.full}. City and ZIP code were filled in.`;
-    closeList({ resetSession: true });
   }
 
-  async function selectResult(result) {
-    try {
-      if (result.provider === 'google') await selectGoogleResult(result);
-      else selectPhotonResult(result);
-    } catch {
-      // Preserve the prediction as manual input if Google Place Details ever fails.
-      street.value = result.line1 || result.full || street.value;
-      streetSubmission.value = street.value;
-      resetAddressMetadata();
-      live.textContent = 'Address selected. Please confirm the city and ZIP code before submitting.';
-      closeList({ resetSession: true });
-    }
-  }
-
-  function render(nextResults) {
-    results = nextResults;
+  function closeList({ endSession = false } = {}) {
+    list.hidden = true;
+    list.replaceChildren();
+    lookup.setAttribute('aria-expanded', 'false');
+    lookup.removeAttribute('aria-activedescendant');
     activeIndex = -1;
-    list.innerHTML = '';
+    results = [];
+    if (endSession) sessionToken = null;
+  }
+
+  function optionButtons() {
+    return [...list.querySelectorAll('.address-suggestion')];
+  }
+
+  function setActive(index) {
+    const buttons = optionButtons();
+    if (!buttons.length) return;
+    activeIndex = Math.max(0, Math.min(index, buttons.length - 1));
+    buttons.forEach((button, i) => button.classList.toggle('is-active', i === activeIndex));
+    const active = buttons[activeIndex];
+    lookup.setAttribute('aria-activedescendant', active.id);
+    active.scrollIntoView({ block: 'nearest' });
+  }
+
+  function predictionText(prediction) {
+    return {
+      main: clean(prediction.mainText?.toString()) || clean(prediction.text?.toString()),
+      secondary: clean(prediction.secondaryText?.toString()),
+      full: clean(prediction.text?.toString()),
+    };
+  }
+
+  function render(predictions) {
+    closeList();
+    results = predictions.slice(0, MAX_RESULTS);
     if (!results.length) {
-      closeList();
-      live.textContent = 'No matching South Florida address found. You can still enter the address manually.';
+      live.textContent = 'No matching address found. Continue typing or enter the address manually.';
       return;
     }
 
-    results.forEach((result, index) => {
+    results.forEach((prediction, index) => {
+      const text = predictionText(prediction);
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'address-suggestion';
       button.id = `address-suggestion-${index}`;
       button.setAttribute('role', 'option');
-      button.innerHTML = '<strong></strong><span></span>';
-      button.querySelector('strong').textContent = result.line1 || result.full;
-      button.querySelector('span').textContent = result.locality || '';
-      button.addEventListener('pointerdown', (event) => event.preventDefault());
-      button.addEventListener('click', () => { void selectResult(result); });
+
+      const main = document.createElement('span');
+      main.className = 'address-suggestion-main';
+      main.textContent = text.main || text.full;
+      button.appendChild(main);
+
+      if (text.secondary) {
+        const secondary = document.createElement('span');
+        secondary.className = 'address-suggestion-secondary';
+        secondary.textContent = text.secondary;
+        button.appendChild(secondary);
+      }
+
+      button.addEventListener('pointerdown', event => event.preventDefault());
       button.addEventListener('mouseenter', () => setActive(index));
+      button.addEventListener('click', () => selectPrediction(prediction));
       list.appendChild(button);
     });
 
     const attribution = document.createElement('div');
-    attribution.className = 'address-suggestion-attribution';
-    attribution.setAttribute('translate', 'no');
-    attribution.textContent = results.some((result) => result.provider === 'google') ? 'Google Maps' : 'Address data © OpenStreetMap contributors';
+    attribution.className = 'address-google-attribution';
+    const googleLogo = document.createElement('img');
+    googleLogo.src = 'https://storage.googleapis.com/geo-devrel-public-buckets/powered_by_google_on_white.png';
+    googleLogo.alt = 'Powered by Google';
+    attribution.appendChild(googleLogo);
     list.appendChild(attribution);
+
     list.hidden = false;
-    street.setAttribute('aria-expanded', 'true');
-    live.textContent = `${results.length} South Florida address suggestions available.`;
+    lookup.setAttribute('aria-expanded', 'true');
+    live.textContent = `${results.length} Google address suggestions available.`;
   }
 
-  async function searchAddress(query) {
-    const requestId = ++searchRequestId;
-    wrapper.classList.add('is-loading');
-    try {
-      try {
-        const googleResults = await googleSuggestions(query);
-        if (requestId !== searchRequestId) return;
-        if (googleResults.length) {
-          render(googleResults);
-          return;
-        }
-      } catch {
-        // Silent fallback below. The public quote form remains usable even during
-        // Google quota/configuration incidents.
-      }
+  function addressComponent(components, type) {
+    return (components || []).find(component => component.types?.includes(type));
+  }
 
-      const fallbackResults = await photonSuggestions(query);
-      if (requestId !== searchRequestId) return;
-      render(fallbackResults);
+  function componentText(components, type, short = false) {
+    const item = addressComponent(components, type);
+    return clean(short ? (item?.shortText || item?.longText) : (item?.longText || item?.shortText));
+  }
+
+  async function selectPrediction(prediction) {
+    wrapper.classList.add('is-loading');
+    clearError();
+    try {
+      const place = prediction.toPlace();
+      await place.fetchFields({
+        fields: ['addressComponents', 'formattedAddress', 'location', 'id'],
+      });
+
+      const components = place.addressComponents || [];
+      const streetNumber = componentText(components, 'street_number');
+      const route = componentText(components, 'route');
+      const subpremise = componentText(components, 'subpremise');
+      const selectedStreet = [streetNumber, route].filter(Boolean).join(' ') || clean(place.formattedAddress).split(',')[0];
+      const selectedCity =
+        componentText(components, 'locality') ||
+        componentText(components, 'postal_town') ||
+        componentText(components, 'sublocality_level_1') ||
+        componentText(components, 'administrative_area_level_2');
+      const selectedState = componentText(components, 'administrative_area_level_1', true) || 'FL';
+      const postal = componentText(components, 'postal_code');
+      const postalSuffix = componentText(components, 'postal_code_suffix');
+      const selectedZip = postalSuffix ? `${postal}-${postalSuffix}` : postal;
+
+      lookup.value = subpremise ? `${selectedStreet}, ${subpremise}` : selectedStreet;
+      streetSubmission.value = lookup.value;
+      if (selectedCity) city.value = selectedCity;
+      if (selectedZip) zip.value = selectedZip;
+      stateInput.value = selectedState;
+
+      const location = place.location;
+      if (location) {
+        latInput.value = String(typeof location.lat === 'function' ? location.lat() : location.lat);
+        lngInput.value = String(typeof location.lng === 'function' ? location.lng() : location.lng);
+      }
+      sourceInput.value = 'Google Places';
+      placeIdInput.value = clean(place.id || prediction.placeId);
+
+      [lookup, city, zip].forEach(input => {
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+
+      live.textContent = `Selected ${[lookup.value, city.value, selectedState, zip.value].filter(Boolean).join(', ')}.`;
+      closeList({ endSession: true });
     } catch (error) {
-      if (error?.name !== 'AbortError' && requestId === searchRequestId) {
-        closeList();
-        live.textContent = 'Address suggestions are temporarily unavailable. Please enter the address manually.';
+      showError('Google found the address, but its details could not be loaded. You can still enter it manually.');
+      closeList({ endSession: true });
+    } finally {
+      wrapper.classList.remove('is-loading');
+    }
+  }
+
+  async function search(query) {
+    const requestId = ++newestRequest;
+    wrapper.classList.add('is-loading');
+    clearError();
+    try {
+      const { AutocompleteSuggestion, AutocompleteSessionToken } = await ensurePlaces();
+      if (!sessionToken) sessionToken = new AutocompleteSessionToken();
+
+      const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions({
+        input: query,
+        inputOffset: query.length,
+        sessionToken,
+        locationRestriction: SOUTH_FLORIDA_BOUNDS,
+        includedRegionCodes: ['us'],
+        origin: SOUTH_FLORIDA_CENTER,
+        language: 'en-US',
+        region: 'us',
+      });
+
+      if (requestId !== newestRequest) return;
+      const predictions = (suggestions || []).map(item => item.placePrediction).filter(Boolean);
+      render(predictions);
+    } catch (error) {
+      if (requestId !== newestRequest) return;
+      closeList({ endSession: true });
+      const message = String(error?.message || '');
+      if (/ApiNotActivatedMapError|REQUEST_DENIED|not authorized|not enabled/i.test(message)) {
+        showError('Google Places is connected but not enabled for this API key yet. Address entry still works manually.');
+      } else if (/key|configured/i.test(message)) {
+        showError('Google address search is not connected on the live page yet. Address entry still works manually.');
+      } else {
+        showError('Google address suggestions are temporarily unavailable. Address entry still works manually.');
       }
     } finally {
-      if (requestId === searchRequestId) wrapper.classList.remove('is-loading');
+      if (requestId === newestRequest) wrapper.classList.remove('is-loading');
     }
   }
 
-  street.addEventListener('input', () => {
-    streetSubmission.value = street.value;
-    resetAddressMetadata();
+  lookup.addEventListener('input', () => {
+    streetSubmission.value = lookup.value;
+    resetMetadata();
     clearTimeout(debounceTimer);
-    const query = clean(street.value);
+    const query = clean(lookup.value);
     if (query.length < MIN_CHARS) {
-      searchRequestId += 1;
-      photonController?.abort();
-      closeList({ resetSession: true });
+      closeList({ endSession: query.length === 0 });
       return;
     }
-    debounceTimer = window.setTimeout(() => { void searchAddress(query); }, DEBOUNCE_MS);
+    debounceTimer = window.setTimeout(() => search(query), DEBOUNCE_MS);
   });
 
-  street.addEventListener('keydown', (event) => {
+  lookup.addEventListener('keydown', event => {
     if (list.hidden) return;
     if (event.key === 'ArrowDown') {
       event.preventDefault();
@@ -480,24 +379,24 @@
       setActive(activeIndex > 0 ? activeIndex - 1 : results.length - 1);
     } else if (event.key === 'Enter' && activeIndex >= 0) {
       event.preventDefault();
-      void selectResult(results[activeIndex]);
+      selectPrediction(results[activeIndex]);
     } else if (event.key === 'Escape') {
-      closeList({ resetSession: true });
+      closeList();
     }
   });
 
-  street.addEventListener('focus', () => {
+  lookup.addEventListener('focus', () => {
     if (results.length) {
       list.hidden = false;
-      street.setAttribute('aria-expanded', 'true');
+      lookup.setAttribute('aria-expanded', 'true');
     }
   });
 
   form.addEventListener('submit', () => {
-    streetSubmission.value = street.value;
+    streetSubmission.value = lookup.value;
   });
 
-  document.addEventListener('pointerdown', (event) => {
-    if (!wrapper.contains(event.target)) closeList({ resetSession: true });
+  document.addEventListener('pointerdown', event => {
+    if (!wrapper.contains(event.target)) closeList();
   });
 })();
