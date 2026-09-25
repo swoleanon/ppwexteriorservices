@@ -148,11 +148,18 @@
   box-shadow: 0 24px 70px rgba(7, 16, 10, 0.18);
 }
 
-.portfolio-still img {
+.portfolio-still img,
+.portfolio-still video,
+.ppw-field-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.ppw-field-video {
+  aspect-ratio: 4 / 3;
+  background: #07100a;
 }
 
 .portfolio-cta {
