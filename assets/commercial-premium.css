@@ -566,3 +566,10 @@ body.commercial-premium .seo-more a { color: var(--ppw-lime); }
   .commercial-final { min-height: 600px; }
   .commercial-final h2 { font-size: clamp(3.2rem, 14vw, 5rem); }
 }
+
+/* Specialized commercial services (four across) */
+.commercial-services-grid.four { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.commercial-services-grid.four .commercial-service-card { min-height: 380px; }
+.commercial-services-grid.four .commercial-service-copy h3 { font-size: 1.45rem; }
+@media (max-width: 1080px) { .commercial-services-grid.four { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 760px) { .commercial-services-grid.four { grid-template-columns: 1fr; } }

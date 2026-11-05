@@ -1,0 +1,9 @@
+/portfolio.html /our-work.html 301
+/portfolio /our-work.html 301
+/projects/cypress-creek-commercial-cleaning.html /commercial.html 301
+/projects/cypress-creek-commercial-cleaning /commercial.html 301
+/projects/fort-lauderdale-driveway-cleaning.html /our-work.html 301
+/projects/fort-lauderdale-driveway-cleaning /our-work.html 301
+/projects/coral-springs-paver-cleaning.html /our-work.html 301
+/projects/coral-springs-paver-cleaning /our-work.html 301
+/projects/* /our-work.html 301
