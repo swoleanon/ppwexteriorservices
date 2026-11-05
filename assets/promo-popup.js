@@ -29,7 +29,7 @@
   const PROMO_PATTERN = /^PPW100-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/;
   const CLOSE_SUPPRESS_MS = 7 * 24 * 60 * 60 * 1000;
 
-  const SKIP_PATHS = /\/(thank-you|form-error)\.html$/;
+  const SKIP_PATHS = /\/(thank-you|form-error|contact)(\.html)?$/;
 
   let backdrop;
   let formPanel;
@@ -293,9 +293,27 @@
     }
   }
 
+  // Show the offer once the visitor has engaged: after 20 seconds on the page
+  // or after scrolling halfway down, whichever comes first.
+  const SHOW_AFTER_MS = 20000;
+  const SHOW_AFTER_SCROLL = 0.5;
+
   function initPopup() {
     if (shouldSkipPopup()) return;
-    requestAnimationFrame(() => openPopup());
+
+    let timer;
+    const trigger = () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+      requestAnimationFrame(() => openPopup());
+    };
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY / max >= SHOW_AFTER_SCROLL) trigger();
+    };
+
+    timer = setTimeout(trigger, SHOW_AFTER_MS);
+    window.addEventListener('scroll', onScroll, { passive: true });
   }
 
   function initContactPromo() {

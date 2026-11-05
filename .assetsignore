@@ -4,3 +4,8 @@
 README.md
 wrangler.jsonc
 .assetsignore
+worker.js
+functions
+tools
+.tmp-shots
+assets/_portrait-preview.png

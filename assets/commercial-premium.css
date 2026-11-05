@@ -573,3 +573,9 @@ body.commercial-premium .seo-more a { color: var(--ppw-lime); }
 .commercial-services-grid.four .commercial-service-copy h3 { font-size: 1.45rem; }
 @media (max-width: 1080px) { .commercial-services-grid.four { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 760px) { .commercial-services-grid.four { grid-template-columns: 1fr; } }
+
+/* Commercial before/after results */
+.commercial-results-section { border-top: 1px solid rgba(7,16,10,.08); }
+.commercial-results { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+.commercial-results .ba-slider { aspect-ratio: 4 / 3; border-radius: 3px; box-shadow: none; }
+@media (max-width: 760px) { .commercial-results { grid-template-columns: 1fr; } }
