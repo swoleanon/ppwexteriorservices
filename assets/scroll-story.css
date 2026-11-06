@@ -1,0 +1,215 @@
+/* PPW scroll story — pinned, scroll-scrubbed cleaning sequence */
+.scroll-story {
+  position: relative;
+  height: 520vh;
+  background: #050806;
+  color: #f4f5f1;
+}
+
+.scroll-story-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.scroll-story-layer {
+  position: absolute;
+  inset: 0;
+  will-change: opacity, clip-path;
+}
+
+.scroll-story-layer img,
+.scroll-story-layer canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Video chapter: blurred full-bleed backdrop + sharp vertical panel */
+.scroll-story-backdrop {
+  filter: blur(28px) brightness(.45) saturate(1.1);
+  transform: scale(1.12);
+}
+
+.scroll-story-panel {
+  position: absolute;
+  top: calc(50% + 34px);
+  left: 50%;
+  height: min(calc(100vh - 140px), 880px);
+  aspect-ratio: 9 / 16;
+  transform: translate(-50%, -50%);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08);
+}
+
+.scroll-story-panel canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scroll-story-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(5,8,6,.55) 0%, rgba(5,8,6,0) 30%, rgba(5,8,6,0) 60%, rgba(5,8,6,.75) 100%);
+}
+
+/* After reveal: wipes in from the left */
+.scroll-story-after { clip-path: inset(0 100% 0 0); }
+
+.scroll-story-wipe {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  left: 0;
+  background: #8cff00;
+  box-shadow: 0 0 24px 4px rgba(140,255,0,.55);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Copy */
+.scroll-story-copy {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scroll-story-line {
+  position: absolute;
+  left: max(24px, calc((100vw - 1320px) / 2 + 24px));
+  bottom: 13vh;
+  max-width: 640px;
+  opacity: 0;
+  transform: translateY(28px);
+  will-change: opacity, transform;
+}
+
+.scroll-story-line.right {
+  left: auto;
+  right: max(24px, calc((100vw - 1320px) / 2 + 24px));
+  text-align: right;
+}
+
+.scroll-story-kicker {
+  display: inline-block;
+  margin: 0 0 14px;
+  color: #8cff00;
+  font-family: "Outfit", sans-serif;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.scroll-story-line h2 {
+  margin: 0;
+  font-family: "Bebas Neue", "Outfit", sans-serif;
+  font-size: clamp(4rem, 11vw, 10.5rem);
+  font-weight: 400;
+  line-height: .86;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  text-shadow: 0 6px 40px rgba(0,0,0,.45);
+}
+
+.scroll-story-line h2 em {
+  font-style: normal;
+  color: #8cff00;
+}
+
+.scroll-story-line p {
+  margin: 18px 0 0;
+  max-width: 440px;
+  color: rgba(244,245,241,.82);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.scroll-story-line.right p { margin-left: auto; }
+
+.scroll-story-line .btn {
+  margin-top: 26px;
+  pointer-events: auto;
+}
+
+/* Progress rail */
+.scroll-story-progress {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  height: 160px;
+  width: 2px;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,.16);
+}
+
+.scroll-story-progress span {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0;
+  background: #8cff00;
+}
+
+.scroll-story-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  color: rgba(244,245,241,.6);
+  font-family: "Outfit", sans-serif;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  .scroll-story { height: 460vh; }
+  .scroll-story-panel {
+    height: 100%;
+    width: 100%;
+    aspect-ratio: auto;
+    top: 50%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .scroll-story-line,
+  .scroll-story-line.right {
+    left: 20px;
+    right: 20px;
+    bottom: 12vh;
+    text-align: left;
+  }
+  .scroll-story-line.right p { margin-left: 0; }
+  .scroll-story-progress { right: 10px; height: 110px; }
+}
+
+/* Reduced motion: no pinning, show the finished result as a still */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-story { height: auto; }
+  .scroll-story-stage { position: relative; height: 80vh; }
+  .scroll-story-before,
+  .scroll-story-video,
+  .scroll-story-wipe,
+  .scroll-story-progress,
+  .scroll-story-hint,
+  .scroll-story-line { display: none; }
+  .scroll-story-after { clip-path: none; }
+  .scroll-story-line.is-final { display: block; opacity: 1; transform: none; }
+}
+
+/* `overflow-x: hidden` on html/body turns them into scroll containers, which
+   breaks position: sticky. `clip` hides sideways overflow without that side effect. */
+html:has(.scroll-story),
+html:has(.scroll-story) body { overflow-x: clip; }
